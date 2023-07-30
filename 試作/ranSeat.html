@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>せきがえ</title>
+</head>
+<body style="text-align: center; margin: 0 auto;">
+    <textarea id="name" rows="3" placeholder='"、"で区切ってください。&#10(例:「佐藤、鈴木、高橋、田中」)' style="width: 90%; margin: 10px auto; resize: vertical;"></textarea><br>
+    <input type="button" value="次へ" onclick="chTxt(document.getElementById('name').value)">
+    <div id="err" style="color: red; margin-top: 5px;"></div>
+    <div id="nonDis" style="display: none;">
+        <h3>使わない席にチェックをつけてください。</h3>
+        <table style="margin: auto;">
+            <tr>
+                <td id="disH" style="margin: auto;">1</td>
+                <td>
+                    <table id="table1" style="border-radius: 3px; border-collapse: collapse;"></table>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="number" min="1" id="disW" style="width: 50px;" onchange="reDraw(this.value, `<input type='checkbox' class='abs' value='/i/'>`, 'table1')">
+                </td>
+            </tr>
+        </table>
+        <input type="button" value="実行" id="intBtn" onclick="exe()">
+        <div style="margin-top: 10px;">
+            <table id="table2" style="display: none; margin: auto; border-radius: 3px; border-collapse: collapse;"></table>
+        </div>
+    </div>
+    <script>
+        const defRtWH = [3, 2];
+        let nameList = [];
+        let WH = [];
+        let len = 0;
+        let all = 0;
+        let disW = document.getElementById("disW");
+        let disH = document.getElementById("disH");
+        let err = document.getElementById("err");
+        let intBtn = document.getElementById("intBtn");
+
+        function disErr(str, nonDis) {
+            if (nonDis == true) {
+                document.getElementById("nonDis").style.display = "none";
+            }
+            err.innerText = str;
+            setTimeout(function() {err.innerText = ""}, 2000);
+        }
+
+        function reDraw(width, content, tableId) {
+            WH[0] = Math.floor(width);
+            WH[1] = Math.ceil(len / WH[0]);
+            all = WH[0] * WH[1];
+            disW.value = WH[0];
+            disH.innerText = WH[1];
+            document.getElementById("table2").innerHTML = "";
+            let table = document.getElementById(tableId);
+            table.innerHTML = "";
+            for (let i = 0; i < WH[1]; i++) {
+                let wRes = "";
+                for (let j = 0; j < WH[0]; j++) {
+                    wRes += `    <td style="border: 1px solid;">${content.replaceAll("/i/", i * WH[0] + j)}</td>\n`;
+                }
+                table.innerHTML += `<tr>${wRes}</tr>\n`;
+            }
+        }
+
+        function chTxt(value) {
+            nameList = value.split("、");
+            len = nameList.length;
+            disW.max = len;
+            if (len < 2) {
+                disErr("最低でも2人以上を入力してください。", true);
+            } else if (nameList.includes("")) {
+                disErr("空白を2回以上続けないでください。", true);
+            } else {
+                reDraw(defRtWH[0] * Math.sqrt(len / (defRtWH[0] * defRtWH[1])), '<input type="checkbox" class="abs" value="/i/">', "table1");
+                nonDis.style.display = "block";
+            }
+        }
+
+        function mainF(abs) {
+            reDraw(WH[0], '<span id="table2-/i/"></span>', "table2");
+            let cache = nameList.concat();
+            for (let i = 0; 0 < cache.length; i++) {
+                let absTF = true;
+                abs.forEach(el => {if (el.value == i) absTF = false});
+                if (absTF) {
+                    document.getElementById("table2-" + i).innerText = cache.splice(Math.floor(Math.random() * cache.length), 1);
+                };
+            };
+            document.getElementById("table2").style.display = "table";
+        }
+
+        function exe() {
+            let abs = document.querySelectorAll("input.abs:checked");
+            if (all - len == abs.length) {
+                let intId = setInterval(mainF, 100, abs);
+                intBtn.value = "ストップ";
+                intBtn.onclick = function(){
+                    
+                    clearInterval(intId);
+                    intBtn.value = "実行";
+                    intBtn.onclick = function(){exe()};
+                };
+            } else {
+                disErr(`使わない席が足りない、または多いです。(${all - abs.length}席, ${len}人)`);
+            }
+        }
+    </script>
+</body>
+</html>

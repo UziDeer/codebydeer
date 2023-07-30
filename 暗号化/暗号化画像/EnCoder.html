@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>エンコーダー | 画像化暗号作成エンジン</title>
+    <link rel="stylesheet" href="index/style.css">
+</head>
+
+<body style="text-align: center;">
+    <header>
+        <h1>暗号の圧縮</h1><br><small><b><a href="DeCoder.html" class="EnDe">暗号の復元はこちらから</a></b></small>
+    </header>
+    <h2>EeCode:<small><i>作成</i></small></h2>
+    <textarea id="before" placeholder="文字を入力" rows="8"
+        style="width: 90%; min-width: 330px; margin-bottom: 15px; resize: vertical; width: calc(100vw - 40px);"></textarea><br>
+    <input type="button" value="実行" onclick="go()"> <small id="try" style="color: red;"></small><br>
+    <h2>Result:<small><i>結果</i></small></h2>
+    <canvas id="dot" width="0" height="0"
+        style="display: none; max-width: calc(100vw - 42px); max-height: calc(100vw - 42px); margin: auto; border: 3px solid skyblue; border-radius: 2px;"></canvas>
+    <small id="info"></small><br>
+    <div id="resDiv" style="display: none;"><input type="text" id="downName" value="coderImage"
+            onchange="changeFName(this.value)">.pngを
+        <a id="downloadA" download="coderImage.png">ダウンロード</a>
+    </div><br>
+    <script>
+        let txtArea = document.getElementById("before");
+        let Err = document.getElementById("try");
+        let canvas = document.getElementById("dot");
+        let context = canvas.getContext("2d");
+        let imgInfo = document.getElementById("info");
+        let resDiv = document.getElementById("resDiv");
+        let anc = document.getElementById("downloadA");
+        function changeFName(value) {
+            anc.download = value += ".png";
+        }
+        function go() {
+            let before = "$" + txtArea.value;
+            resDiv.style.display = "none";
+            canvas.style.display = "none";
+            imgInfo.innerText = "";
+            if (before == "$") {
+                Err.innerText = "文字列を入力してください。";
+            } else {
+                let sqr = Math.floor(Math.sqrt(before.length - 1)) + 1;
+                canvas.style.display = "block";
+                canvas.style.width = sqr * 10 + "px";
+                canvas.style.height = sqr * 10 + "px";
+                canvas.width = sqr;
+                canvas.height = sqr;
+                context.fillStyle = "#0000ff";
+                context.fillRect(0, 0, sqr, sqr);
+                let i = 0;
+                let sec = Math.floor((before.length / 33600));
+                let secIn = setInterval(function () {
+                    if (sec == 0) {
+                        clearInterval(secIn);
+                    } else {
+                        sec = Math.floor((sqr ** 2 - i * sqr) / 33600);
+                        imgInfo.innerText = `あと約${sec}秒(目安)`;
+                    }
+                }, 1000);
+                let inter = setInterval(function () {
+                    if (i == sqr) {
+                        anc.href = canvas.toDataURL();
+                        let pngSize = atob(canvas.toDataURL().split(",")[1]).length;
+                        let iBsize = pngSize;
+                        const iBdata = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB"];
+                        let iB = iBdata[0];
+                        for (let n = 1; iBsize >= 1024; n++) {
+                            iBsize = Math.round(iBsize * 10 / 1024) / 10;
+                            iB = iBdata[n];
+                        }
+                        imgInfo.innerText = `文字数: ${before.length - 1}文字, ピクセルサイズ: ${sqr ** 2}px (${sqr}x${sqr}), データサイズ: ${iBsize}${iB} (${pngSize}バイト)`;
+                        if (pngSize < 209715200) {
+                            resDiv.style.display = "block";
+                            Err.innerText = "";
+                        } else {
+                            Err.innerText = "データが大きすぎます。クイックダウンロードはできません。画像を右クリックまたは長押しして、画像を保存してください。";
+                        }
+                        clearInterval(secIn);
+                        clearInterval(inter);
+                    } else {
+                        for (let j = 0; j < sqr; j++) {
+                            const t = i * sqr + j;
+                            if (before.slice(t, t + 1) == "") {
+                                context.fillStyle = "#00ff00";
+                            } else {
+                                context.fillStyle = "#" + ("f0000" + String(before.charCodeAt(t)).match(/^\d{1,5}$/) + "0").slice(-6);
+                            }
+                            context.fillRect(j, i, 1, 1);
+                        }
+                        i++;
+                    }
+                }, 0);
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="UziDeer">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>暗号化エンジン-mobile</title>
+    <style>
+        body {
+            background-color: lemonchiffon;
+            word-wrap: break-word;
+            margin: 0px;
+        }
+
+        header {
+            height: 90px;
+            color: orange;
+            text-align: left;
+            background-color: blue;
+        }
+
+        h1 {
+            margin: 0px;
+            padding: 20px;
+            font-size: 35px;
+        }
+
+        textarea {
+            width: 96%;
+            border-color: black;
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 3px;
+            resize: none;
+        }
+
+        input[type='number'] {
+            width: 200px;
+            height: 25px;
+            transform: translateY(-15px);
+        }
+
+        div {
+            display: none;
+        }
+
+        h2 {
+            color: yellowgreen;
+            margin-left: auto;
+            margin-right: auto;
+            width: 300px;
+            border-radius: 10px;
+            background-color: antiquewhite;
+        }
+
+        small {
+            color: red;
+        }
+
+        i {
+            color: gray;
+        }
+    </style>
+    <script>
+        function ranInt(n, m) {
+            let result = 0;
+            for (let i = 0; result < n; i++) {
+                result = Math.floor(Math.random() * m);
+            }
+            return result;
+        }
+        function NumToStr(n, m) {
+            let str = "";
+            for (let i = 0; i < m; i++) {
+                str += '0';
+            }
+            str += String(n);
+            return str.slice(-m);
+        }
+        function cmp(Num, hex) {
+            const CmpEl = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+            Num = Number(Num);
+            hex = Number(hex);
+            let Expo = 0;
+            for (let i = 0; hex ** i < Num; i++) {
+                Expo++;
+            }
+            let cmpResult = '';
+            let rmn = Num;
+            for (let j = Expo - 1; j >= 0; j--) {
+                cmpResult += CmpEl[Math.floor(rmn / (hex ** j))];
+                rmn = rmn % (hex ** j);
+            }
+            return cmpResult;
+        }
+        function EnCodeDo(before, enVar) {
+            before = String(before);
+            enVar = Number(enVar);
+            let tesText = '';
+            let result = '$&空文字列です。$&';
+            let CodeNum = [[''], [''], [''], [''], ['']];
+            for (let i = 0; i <= Math.floor((before.length - 1) / 3); i++) {
+                CodeNum[0][i] = '';
+                for (let j = 0; j < 3; j++) {
+                    let Num = before.charCodeAt(3 * i + j) + 2 * enVar + 3;
+                    if (i == Math.floor((before.length - 1) / 3) && j > (before.length - 1) % 3) {
+                        Num = 3;
+                    } else if (String(Num).match(/\d{1,5}/) == null) {
+                        Num = 0;
+                        tesText += `文字"${before.slice(3 * i + j, 3 * i + j + 1)}"(${3 * i + j + 1}文字目),`;
+                        console.warn('使えない文字があります');
+                    }
+                    CodeNum[0][i] += NumToStr(Num, 5);
+                }
+                CodeNum[1][i] = ranInt(100, 1000);
+                CodeNum[2][i] = Math.floor(Number(CodeNum[0][i]) / (CodeNum[1][i] ** 2 - 4));
+                CodeNum[3][i] = CodeNum[0][i] % (CodeNum[1][i] ** 2 - 4);
+                CodeNum[4][i] = NumToStr(cmp(CodeNum[1][i] + 8, 50), 2) + cmp(CodeNum[2][i] + 2, 62) + NumToStr(cmp(CodeNum[3][i] + 4, 60), 4);
+                CodeNum[4][i] = cmp(CodeNum[4][i].length + 28, 16) + CodeNum[4][i];
+            }
+            if (tesText == '') {
+                result = CodeNum[4].join('') + '$&$&' + enVar;
+            } else {
+                result = CodeNum[4].join('') + '$&' + tesText.slice(0, -1) + 'は使えない文字のため、不明文字に変換されます。$&' + enVar;
+            }
+            if (before.match(/^\&#\[console\]/) != null) {
+                console.log('ConsoleMode: ', before, CodeNum, result, tesText);
+                result = '$console(ConsoleMode);$&コンソールモードです。$&';
+            }
+            return result;
+        }
+        function EnCodeGo(beforeId, enVarId, warnTxtId, afterId, txtareaId) {
+            let before = document.getElementById(String(beforeId)).value;
+            let enVar = document.getElementById(String(enVarId)).value;
+            let testDiv = document.getElementById(String(warnTxtId));
+            let div = document.getElementById(String(afterId));
+            let txtarea = document.getElementById(String(txtareaId));
+            if (before == '') {
+                testDiv.innerText = "文字列を入力してください。";
+                div.innerText = "\n";
+                const id = setInterval(copy, 3000);
+                function copy() {
+                    testDiv.innerText = '';
+                    clearInterval(id);
+                }
+            } else {
+                if (!(99 < enVar && enVar < 3844)) {
+                    enVar = ranInt(100, 3843);
+                    document.getElementById(String(enVarId)).value = enVar;
+                }
+                let state = EnCodeDo(before.replace('$', '�'), enVar).split('$&');
+                testDiv.innerText = state[1];
+                div.innerHTML = state[0].replace('$console(', '<b>$console(').replace(');', ');</b>');
+                if (state[0].match(/^(\t| )+$/) != null) {
+                    testDiv.innerText += '空文字のため、改行文字を末尾に追加しました。';
+                }
+            }
+            txtarea.value = div.innerText;
+            txtarea.style.height = '10px';
+            txtarea.style.height = txtarea.scrollHeight + 'px';
+        }
+        console.info("ⒸUziDeer");
+    </script>
+</head>
+
+<body style="text-align: center;">
+    <header><h1>暗号の圧縮</h1></header>
+    <h2>EeCode:<small><i>作成</i></small></h2>
+    <textarea id="before" placeholder="文字を入力(9999文字まで)" rows="7" max="9999"></textarea><br><br>
+    <input type="number" id="enVar" min="100" max="3843" placeholder="環境変数を入力(100～3843,任意)"><br>
+    <input type="button" value="実行" onclick="EnCodeGo('before','enVar','try','div','result')">
+    <small id="try"></small>
+    <h2>Result:<small><i>結果</i></small></h2>
+    <div id="div"><br></div>
+    <textarea id="result" rows="1"></textarea>
+    <footer>ⒸUziDeer</footer>
+</body>
+
+</html>

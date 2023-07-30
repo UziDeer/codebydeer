@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NumSelect</title>
+</head>
+<body>
+    <form action="index.php" method="get">
+        <input type="number" name="A"><br>
+        <input type="number" name="B"><br>
+        <input type="number" name="C"><br>
+        <input type="radio" name="r" value="D"><input type="number" name="D"><br>
+        <input type="radio" name="r" value="E"><input type="number" name="E"><br>
+        <input type="radio" name="r" value="F"><input type="number" name="F"><br>
+        <input type="submit" value="submit">
+    </form>
+    <button onclick="canRadio()">radioを取り消す</button>
+    <script>
+        function canRadio() {
+            let r = document.getElementsByName('r');
+            r.forEach(element => {
+                element.checked = null;
+            });
+        }
+    </script>
+</body>
+</html>

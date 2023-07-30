@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>補助ツール</title>
+</head>
+
+<body>
+    <textarea onchange="encode(this.value, 'encRes', 'encInfo')" placeholder="64進数" autocomplete="off"></textarea>
+    <div id="encInfo"><br></div>
+    <textarea id="encRes" placeholder="UTF-16 (+20)" autocomplete="off"></textarea>
+    <hr>
+    <textarea onchange="decode(this.value, 'decRes', 'decInfo')" placeholder="UTF-16 (+20)" autocomplete="off"></textarea>
+    <div id="decInfo"><br></div>
+    <textarea id="decRes" placeholder="64進数" autocomplete="off"></textarea>
+    <hr>
+    <textarea onchange="compStrStr[0] = this.value" placeholder="比較対象1" autocomplete="off"></textarea>
+    <textarea onchange="compStrStr[1] = this.value" placeholder="比較対象2" autocomplete="off"></textarea>
+    <button onclick="compStr(compStrStr[0], compStrStr[1], 'compRes')">比較</button>
+    <div id="compRes" class="res"></div>
+    <style>
+        div.res, textarea {
+            border: solid 1px;
+            border-radius: 5px;
+            display: block;
+            width: 90vw;
+            height: 20vh;
+            overflow: scroll;
+            scrollbar-width: none;
+            font-family: 'MS Gothic';
+        }
+    </style>
+    <script>
+        let ret = [];
+        let compStrStr = [];
+        const CmpElAll = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '+', '/'];
+        CmpEl = CmpElAll;
+        let splLen = 2;
+        let timeOut = 20;
+        let addition = 20;
+
+        function deCmp(Code, hex) {
+            Code = String(Code);
+            hex = Number(hex);
+            let numResult = 0;
+            for (let i = 0; Code.length > 0; i++) {
+                let addNum = (hex ** i) * CmpEl.indexOf(Code.slice(-1));
+                if (addNum >= 0) {
+                    numResult += addNum;
+                } else {
+                    throw new Error("is Not Bin64");
+                }
+                Code = Code.slice(0, -1);
+            }
+            return numResult;
+        }
+
+        function cmp(Code, hex) {
+            Code = Number(Code);
+            hex = Number(hex);
+            let Expo = 0;
+            for (let i = 0; hex ** i < Code; i++) {
+                Expo++;
+            }
+            let cmpResult = '';
+            let rmn = Code;
+            for (let j = Expo - 1; j >= 0; j--) {
+                cmpResult += CmpEl[Math.floor(rmn / (hex ** j))];
+                rmn = rmn % (hex ** j);
+            }
+            return cmpResult;
+        }
+
+        function encode(string, resTxtId, staTxtId) {
+            let res = document.getElementById(resTxtId);
+            res.value = "";
+            console.log(string.length);
+            for (let i = 0; i < string.length % splLen; i++) {
+                string = "0" + string;
+                console.log("zero padding")
+            }
+            console.log(string.length / splLen);
+            let i = 0;
+            let count = 0;
+            let inter = setInterval(() => {
+                if (i < string.length) {
+                    document.getElementById(staTxtId).innerText = `あと約${Math.round((string.length - i) / (1000 / Math.max(timeOut, 30) * splLen))}秒, ${count}回の処理, ${i}文字目, 現在の文字: ${string.slice(i, i + splLen)}, 10進: ${deCmp(string.slice(i, i + splLen), 64)}`;
+                    res.value += String.fromCharCode(deCmp(string.slice(i, i + splLen), 64) + addition);
+                    i += splLen;
+                    count++;
+                } else {
+                    clearInterval(inter);
+                    console.log(i, count);
+                }
+            }, timeOut);
+        }
+
+        function decode(string, resTxtId, staTxtId) {
+            let res = document.getElementById(resTxtId);
+            res.value = "";
+            for (let i = 0; i < string.length; i++) {
+                res.value += (String(10 ** splLen) + cmp(string.charCodeAt(i) - addition, 64)).slice(-splLen);
+            }
+        }
+
+        function compStr(string1, string2, resTxtId) {
+            let res = document.getElementById(resTxtId);
+            res.innerHTML = "";
+            if (string1 != string2) {
+                let compArr = [string1.split(""), string2.split("")];
+                for (let i = 0; i < Math.max(compArr[0].length, compArr[1].length); i++) {
+                    if (compArr[0][i] != compArr[1][i]) {
+                        console.warn(i, compArr[0][i], compArr[1][i]);
+                        res.innerHTML += `<mark style color="red">^ ${compArr[0][i]}||${compArr[1][i]} $</mark>`;
+                    } else {
+                        res.innerHTML += compArr[0][i];
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

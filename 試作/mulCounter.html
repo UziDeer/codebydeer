@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>複数カウンター</title>
+</head>
+<body>
+    <h2>複数カウンター</h2>
+    <table id="main">
+    </table>
+    <button onclick="addCounter()">カウンターを追加</button> <button onclick="reset()">リセット</button>
+    <style>
+        input {
+            border: none;
+            width: 90px;
+            height: 20px;
+        }
+    </style>
+</body>
+<script>
+    const first = 1;
+    let ex = {};
+    let main = document.getElementById("main");
+    let last = first;
+
+    function ROW() { return document.getElementsByClassName("row") };
+    
+    function idToDOM(id) {
+        let res = document.getElementById("count" + id);
+        if (res == null) {
+            return ex;
+        } else {
+            return res;
+        }
+    }
+
+    function num(id) {
+        return Number(idToDOM(id).innerText);
+    }
+
+    function add(id, mode) {
+        let disp = idToDOM(id);
+        if (mode == "add") {
+            disp.innerText = num(id) + 1;
+        } else if (mode == "dec" && num(id) > 0) {
+            disp.innerText = num(id) - 1;
+        }
+    }
+
+    function addCounter() {
+        main.insertAdjacentHTML("beforeend", `<tr class="row" id="${last}"><td><input type="text" value="カウンター${last}"></td><td> : </td></td><td><b id="count${last}" style="margin: auto;">0</b></td><td><button onclick="add(${last}, 'add')">プラス</button></td><td><button onclick="add(${last}, 'dec')">マイナス</button></td></tr>`);
+        last++;
+    }
+
+    function reset() {
+        for (let i = 0; i < ROW().length; i++) {
+            idToDOM(i).innerText = "0";
+        }
+    }
+
+    function sort() {
+        let end = false;
+        let res = [];
+        for (let i = first; !end; i++) {
+            if (num(i) > num(i - 1)) {
+                
+            } else {
+                
+            }
+        }
+    }
+
+    addCounter();
+</script>
+</html>

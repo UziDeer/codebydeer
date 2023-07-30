@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="UziDeer">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>暗号化エンジン | CodeByDeer</title>
+    <link rel="stylesheet" href="index/style.css">
+</head>
+
+<body style="text-align: center;">
+    <header><h1 class="head">暗号の圧縮</h1><br><small><b><a href="DeCoder.html" class="EnDe">暗号の復元はこちらから</a></b></small></header>
+
+    <h2 class="head">EeCode:<small><i class="head">作成</i></small></h2>
+
+    <textarea id="before" placeholder="文字を入力" rows="9"></textarea><br><br>
+    <input type="number" id="enVar" min="100" max="3843" placeholder="環境変数を入力(100～3843,任意)"><br>
+    <input type="button" value="実行" onclick="EnGo()"><small id="about"></small>
+
+    <h2 class="head">Result:<small><i class="head">結果</i></small></h2>
+
+    <canvas id="canvas" width="0" height="0"></canvas>
+    <small id="info"></small><br>
+    <div id="downDiv" style="display: none;">
+        <input type="text" id="downName" value="coderImage" onchange="EnFName(this.value)">.pngを
+        <a id="downAnc" download="coderImage.png">ダウンロード</a>
+    </div><br>
+    
+    <script src="index/function.js"></script>
+</body>
+
+</html>

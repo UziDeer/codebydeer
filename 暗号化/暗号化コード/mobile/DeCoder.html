@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="UziDeer">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>復元化エンジン-mobile</title>
+    <style>
+        body {
+            background-color: lemonchiffon;
+            word-wrap: break-word;
+            margin: 0px;
+        }
+
+        header {
+            height: 90px;
+            color: orange;
+            text-align: left;
+            background-color: blue;
+        }
+
+        h1 {
+            margin: 0px;
+            padding: 20px;
+            font-size: 35px;
+        }
+
+        textarea {
+            width: 96%;
+            border-color: black;
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 3px;
+            resize: none;
+        }
+
+
+
+        input[type='number'] {
+            width: 200px;
+            height: 25px;
+            transform: translateY(-15px);
+        }
+
+        div {
+            display: none;
+        }
+
+        h2 {
+            color: yellowgreen;
+            margin-left: auto;
+            margin-right: auto;
+            width: 300px;
+            border-radius: 10px;
+            background-color: antiquewhite;
+        }
+
+        small {
+            color: red;
+        }
+
+        i {
+            color: gray;
+        }
+    </style>
+    <script>
+        function NumToStr(n, m) {
+            let str = "";
+            for (let i = 0; i < m; i++) {
+                str += '0';
+            }
+            str += String(n);
+            return str.slice(-m);
+        }
+        function deCmp(Code, hex) {
+            const CmpEl = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+            Code = String(Code);
+            hex = Number(hex);
+            let numResult = 0;
+            for (let i = 0; Code.length > 0; i++) {
+                for (let j = 0; !Code.slice(-1).match(CmpEl[j]); j++) {
+                    numResult += hex ** i;
+                }
+                Code = Code.slice(0, -1);
+            }
+            return numResult;
+        }
+        function DeCodeDo(before, enVar) {
+            let varBefore = String(before).replace(/^\&#\[console\]/, '');
+            enVar = Number(enVar);
+            let tesText = '';
+            let result = '$&空文字列です。$&';
+            let CodeNum = [[], [], [], [], []];
+            let charCode = [[], []];
+            for (let i = 0; varBefore.length > 0; i++) {
+                let n = deCmp(varBefore.slice(0, 1), 62) - 28;
+                CodeNum[0][i] = varBefore.slice(1, n + 1);
+                CodeNum[1][i] = deCmp(CodeNum[0][i].slice(0, 2), 50) - 8;
+                CodeNum[2][i] = deCmp(CodeNum[0][i].slice(2, -4), 62) - 2;
+                CodeNum[3][i] = deCmp(CodeNum[0][i].slice(-4), 60) - 4;
+                CodeNum[4][i] = NumToStr((CodeNum[1][i] ** 2 - 4) * CodeNum[2][i] + CodeNum[3][i], 15);
+                for (let j = 0; j < 3; j++) {
+                    let len = 3 * i + j;
+                    charCode[0][len] = Number(CodeNum[4][i].slice(5 * j, 5 * j + 5));
+                    if (charCode[0][len] == 3) {
+                        charCode[1][len] = '';
+                    } else if (charCode[0][len] == 0) {
+                        charCode[1][len] = '⚠';
+                        tesText += `${len + 1}文字目,`;
+                    } else {
+                        charCode[1][len] = String.fromCharCode(charCode[0][len] - 2 * enVar - 3);
+                    }
+                }
+                varBefore = varBefore.slice(n + 1);
+            }
+            if (tesText == '') {
+                result = charCode[1].join('') + '$&$&' + enVar;
+            } else {
+                result = charCode[1].join('') + '$&' + tesText.slice(0, -1) + 'は不明文字です。$&' + enVar;
+            }
+            if (before.match(/^\&#\[console\]/) != null) {
+                console.log('ConsoleMode: ', before, CodeNum, charCode, result, tesText);
+                result = '$console(ConsoleMode);$&コンソールモードです。$&'
+            }
+            return result;
+        }
+        function DeCodeGo(beforeId, enVarId, warnTxtId, afterId, txtareaId) {
+            let before = document.getElementById(String(beforeId)).value;
+            let enVar = document.getElementById(String(enVarId)).value;
+            let testDiv = document.getElementById(String(warnTxtId));
+            let div = document.getElementById(String(afterId));
+            let txtarea = document.getElementById(String(txtareaId));
+            if (before == '') {
+                testDiv.innerText = "文字列を入力してください。";
+                div.innerText = "\n";
+            } else if (!(99 < enVar && enVar < 3844)) {
+                testDiv.innerText = "正しい環境変数を入力してください。";
+                div.innerText = "\n";
+            } else {
+                let state = DeCodeDo(before, enVar).split('$&');
+                testDiv.innerText = state[1];
+                div.innerHTML = state[0].replace('&#[環境変数]', '<b>' + state[2] + '</b>').replace('$console(', '<b>$console(').replace(');', ');</b>');
+                if (state[0].match(/^(\t| )+$/) != null) {
+                    testDiv.innerText += '空文字のため、改行文字を末尾に追加しました。';
+                    div.innerText += "\n";
+                }
+            }
+            txtarea.value = div.innerText;
+            txtarea.style.height = '10px';
+            txtarea.style.height = txtarea.scrollHeight + 'px';
+        }
+        console.info("ⒸUziDeer");
+    </script>
+</head>
+
+<body style="text-align: center;">
+    <header>
+        <h1>暗号の解凍</h1>
+    </header>
+    <h2>DeCode:<small><i>復元</i></small></h2>
+    <textarea id="before" placeholder="暗号を入力" rows="7" max="9999"></textarea><br><br>
+    <input type="number" id="enVar" min="100" max="3843" placeholder="環境変数を入力"><br>
+    <input type="button" value="実行" onclick="DeCodeGo('before','enVar','try','div','result')">
+    <small id="try"></small>
+    <h2>Result:<small><i>結果</i></small></h2>
+    <div id="div"><br></div>
+    <textarea id="result" rows="1"></textarea>
+    <footer>ⒸUziDeer</footer>
+</body>
+
+</html>

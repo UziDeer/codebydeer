@@ -1,0 +1,2 @@
+<input type="file" onchange="let fr = new FileReader(); fr.onload = function() {console.log(fr.result); document.getElementById('res').value = fr.result;}; fr.readAsDataURL(this.files[0])">
+<textarea id="res"></textarea>

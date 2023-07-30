@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="text-align: center;">
+    <h2 id="a"></h2>
+    回数:<input type="number" id="max">
+    <input type="button" value="実行" onclick="exe(document.getElementById('max').value)">
+</body>
+<script>
+    function exe(max) {
+        let arr = [];
+        for (let index = 0; index < max; index++) {
+            let random = Math.floor(Math.random() * max);
+            while (arr.includes(random)) {
+                random = Math.floor(Math.random() * max);
+            }
+            arr.push(random);
+        }
+        document.getElementById("a").innerText = arr.join(", ");
+    }
+</script>
+</html>

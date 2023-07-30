@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-t図の作成</title>
+</head>
+
+<body>
+    <br><input type="number" id="input" placeholder="基準点からの距離"> <input type="button" value="実行" onclick="exe(document.getElementById('input').value)"><br><br>
+    <div style="display: flex; align-items: start;">
+        <table id="table" style="width: fit-content;">
+            <tr>
+                <th>基準タイム</th>
+                <th>基準距離</th>
+                <th>区間距離</th>
+                <th>区間速さ</th>
+                <th>グラフの傾き</th>
+            </tr>
+        </table>
+        <div style="line-height: 100px; text-align: center;"><div style="line-height: normal; height: 50px;">v</div>2.40<br>2.00<br>1.60<br>1.20<br>0.80<br>0.40<br>0</div>
+        <div>
+            <canvas id="canvas" width="700px" height="700px" style="border: 1px solid black;"></canvas><br>
+            <table style="margin-left: 35px;">
+                <tr>
+                    <td class="t">0.20</td>
+                    <td class="t">0.40</td>
+                    <td class="t">0.60</td>
+                    <td class="t">0.80</td>
+                    <td class="t">1.00</td>
+                    <td class="t">1.20</td>
+                    <td class="t">1.40</td>
+                    <td class="t">1.60</td>
+                    <td class="t">1.80</td>
+                    <td style="width: 34px; text-align: right;">t</td>
+                </tr>
+            </table>
+        </div>
+        <table style="height: 712px; border: none; border-collapse: collapse;"><tr><td id="tilt" style="height: auto; vertical-align: bottom;">v=at</td></tr><tr id="padding" style="height: 0px;"></tr></table>
+    </div>
+    <style>
+        td.t {
+            padding: 0;
+            text-align: center;
+            width: 68px;
+        }
+    </style>
+    <script>
+        function roundF(num, length) {
+            return Math.round(10 ** length * num) / 10 ** length;
+        }
+        let canvas = document.getElementById("canvas");
+        let context = canvas.getContext("2d");
+        context.fillStyle = "black";
+        for (let i = 1; i <= 700; i++) {
+            for (let j = 1; j <= 700; j++) {
+                if ((j % 70 == 0 && Math.floor(i / 3) % 2 == 1) || (i % 10 == 0 && Math.floor(j / 3) % 2 == 1)) {
+                    context.fillRect(j, i, 1, 1);
+                }
+            }
+        }
+        let table = document.getElementById("table");
+        let tilt = document.getElementById("tilt");
+        let pad = document.getElementById("padding");
+        let alAd = 0;
+        let a = 0;
+        let rEnd = 0;
+        let before = [0.00, 0.0000];
+        function exe(num) {
+            if (num == "") {
+                num = 0;
+            }
+            let now = [roundF(before[0], 3), roundF(num - before[1], 4)];
+            before[0] += 0.20;
+            before[1] = num;
+            let xy = [roundF(now[0] / 2 * 700, 3), roundF((2.80 - now[1] * 5) * 250, 4)];
+            context.fillRect(xy[0] - 1, xy[1] - 2, 3, 1);
+            context.fillRect(xy[0] - 2, xy[1] - 1, 5, 3);
+            context.fillRect(xy[0] - 1, xy[1] + 2, 3, 1);
+            context.save();
+            alAd += (now[1] / 0.2) / now[0];
+            if (isNaN(alAd)) {
+                alAd = 0;
+            }
+            a = roundF(alAd / (now[0] / 0.2), 3);
+            tilt.innerText = `v=${a}t`;
+            if (isNaN(a)) {
+                tilt.innerText = "v=at";
+                a = 0;
+            }
+            rEnd = roundF((2.80 - a * 2) * 250, 4);
+            pad.style.height = (700 - rEnd) + "px";
+            table.innerHTML += `
+                <tr>
+                    <td>${now[0]}</td>
+                    <td>${num}</td>
+                    <td>${now[1]}</td>
+                    <td>${roundF(now[1] / 0.2, 4)}</td>
+                    <td>${a}</td>
+                </tr>
+            `;
+            context.beginPath();
+            context.restore();
+            context.moveTo(0, 700);
+            context.lineTo(700, rEnd);
+            context.stroke();
+        }
+        exe(0);
+    </script>
+</body>
+
+</html>

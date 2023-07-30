@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="UziDeer">
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>復元化エンジン | CodeByDeer</title>
+    <link rel="stylesheet" href="index/style.css">
+</head>
+
+<body style="text-align: center;">
+    <header><h1 class="head">暗号の解凍</h1><br><small><b><a href="EnCoder.html" class="EnDe">暗号の作成はこちらから</a></b></small></header>
+
+    <h2 class="head">DeCode:<small><i class="head">復元</i></small></h2>
+
+    <table style="margin: auto;">
+        <tr>
+            <td><input type="file" name="file" id="idFile" accept="image/png"
+                    style="display: inline-block; margin: auto; opacity: 0; width: 150px;" required
+                    onchange="fileCheck()"></td>
+            <td><small id="filePreview">ファイルを選択してください。</small></td>
+        </tr>
+        <tr>
+            <td><button style="pointer-events: none; width: 150px; transform: translateY(-30px);">暗号ファイルを選択…</button>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+    <input type="number" id="enVar" min="100" max="3843" placeholder="環境変数を入力"><br>
+    <input type="button" value="実行" onclick="DeCodeGo()">
+    <small id="try"></small>
+
+    <h2 class="head">Result:<small><i class="head">結果</i></small></h2>
+
+    <img id="hiddenImg" class='sqrimg' style="display: none;">
+    <canvas id="canvas"></canvas>
+    <progress id="prog" style="width: 300px; display: none; margin: 10px auto;"></progress>
+    <small id="imgInfo"></small>
+    <input type="button" id="cancelBtn" value="読込キャンセル" style="display: none; margin: auto;" onclick="clear()"><br>
+    <div id="div"></div><br>
+
+    <script>let DeHidImg = document.getElementById("DeHidImg");</script>
+    <script src="index/function.js"></script>
+</body>
+
+</html>

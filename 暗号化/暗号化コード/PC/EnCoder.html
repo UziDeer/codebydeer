@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="UziDeer">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>暗号化エンジン-PC</title>
+    <link rel="stylesheet" href="index/style.css">
+    <script src="index/mathFunc.js"></script>
+    <script src="index/common.js"></script>
+</head>
+
+<body style="text-align: center;">
+    <header>
+        <h1>暗号の圧縮</h1><br><small><b><a href="DeCoder.html">暗号の復元はこちらから</a></b></small>
+    </header>
+    <h2>EnCode:<small><i>作成</i></small></h2>
+    <textarea id="before" placeholder="文字を入力(9999文字まで)" rows="9" max="9999"></textarea><br><br>
+    <input type="number" id="enVar" min="100" max="3843" placeholder="環境変数を入力(100～3843,任意)"><br>
+    <input type="button" value="実行" onclick="EnCodeGo()">
+    <small id="try"></small>
+    <h2>Result:<small><i>結果</i></small></h2>
+    <input type="button" value='暗号をコピー' onclick="copyTxt('div','TesTxt1')"> <small id='TesTxt1'></small>
+    <br>
+    <div id="div"><br></div><br>
+    <input type="button" value='暗号をコピー' onclick="copyTxt('div','TesTxt2')"> <small id='TesTxt2'></small>
+    <script>
+        function EnCodeGo() {
+            let before = document.getElementById('before').value;
+            let enVar = document.getElementById('enVar').value;
+            let testDiv = document.getElementById('try');
+            let div = document.getElementById('div');
+            if (before == '') {
+                testDiv.innerText = '文字列を入力してください。';
+                div.innerText = '\n';
+                const id = setInterval(copy, 3000);
+                function copy() {
+                    testDiv.innerText = '';
+                    clearInterval(id);
+                }
+            } else {
+                if (enVar < 99 || 3844 < enVar) {
+                    enVar = ranInt(100, 3843);
+                    document.getElementById('enVar').value = enVar;
+                }
+                let state = EnCodeDo(before.replace('$', '�').replaceAll('\n', '$n'), enVar);
+                testDiv.innerHTML = state[1].replaceAll('$e', '<span style="color: red;">').replaceAll('$/e', '</span>');
+                document.getElementById('enVar').value = state[2];
+                div.innerHTML = state[0].replace('$c', '<b>').replace('$/c', '</b>');
+                if (state[0].match(/^(\t| )+$/) != null) {
+                    testDiv.innerText += '空文字のため、改行文字を末尾に追加しました。';
+                }
+            }
+        }
+    </script>
+    <footer>ⒸUziDeer</footer>
+</body>
+
+</html>

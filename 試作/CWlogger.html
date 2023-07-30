@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CWログ記録(デモ) | codebydeer</title>
+</head>
+<body>
+    <div id="div" style="display: flex; border: 1px solid; border-radius: 3px; resize: vertical; scrollbar-width: none; overflow: scroll;">
+        <canvas id="canvas" width="21" height="21" style="display: block; margin: auto 0 0 auto;"></canvas>
+    </div>
+    <br>
+    <div style="height: 60px; overflow: hidden;">
+        <select id="" onchange="chDir(this.value)">
+            <option value="0">横向き</option>
+            <option value="1">縦向き</option>
+        </select>
+        
+        <table style="border-collapse: collapse; height: 60px; overflow: hidden;">
+            <tr><td><button style="pointer-events: none;">ログファイルを読み込み</button></td></tr>
+            <tr><td><input type="file" onchange="" onload="" style="opacity: 0; transform: translateY(-42px);"></td></tr>
+        </table>
+    </div>
+    <a id="anc" download="CW_00000000_0000.log" href="data:," style="line-height: 40px;">ログファイルを書き出し</a>
+
+    <style>
+        a, button, input[type="file"] {
+            display: block;
+            font-size: medium;
+            text-decoration: none;
+            color: black;
+            border: 1px solid;
+            border-radius: 10px;
+            width: 95vw;
+            max-width: 250px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-align: center;
+            height: 40px;
+            background-color: yellow;
+        }
+    </style>
+    <script>
+        const styleW = "105px";
+        function encodeBase64(bin) {
+            let atoz = "abcdefghijklmnopqrstuvwxyz";
+            const arr = ("0123456789" + atoz + atoz.toUpperCase() + ".!").split("");
+            let res = "";
+            bin = String(10 ** (5 - ((bin.length - 1) % 6))).slice(1) + bin;
+            for (let i = 0; i < bin.length; i++) {
+                if (i % 6 == 0) {
+                    res += arr[parseInt(bin.slice(i, i+6), 2)];
+                }
+            }
+            return "data:," + res;
+        }
+
+        let opt = {dir: 0, resize: ["horizontal", "vertical"], bgC: "black", liC: "#800", dps: 20};
+        let div = document.getElementById("div");
+        let cvs = document.getElementById("canvas");
+        let ctx = cvs.getContext("2d");
+        div.style.resize = opt.resize[opt.dir];
+        if (opt.dir == 0) {
+            div.style.height = styleW;
+            cvs.style.height = styleW;
+        } else if (opt.dir == 1) {
+            div.style.width = styleW;
+            cvs.style.width = styleW;
+        }
+        ctx.fillStyle = opt.bgC;
+        ctx.fillRect(0, 0, opt.bWH, opt.bWH);
+    </script>
+</body>
+</html>

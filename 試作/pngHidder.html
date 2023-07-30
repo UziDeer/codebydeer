@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>画像の隠しカード機能(乱数機能付き)</title>
+</head>
+
+<body>
+    <div id="head">
+        拡大率&nbsp;<input type="range" id="zoomR" value="100" min="10" max="600" style="width: 300px;"
+            oninput="changeStyle('div#content *', 'transform', 'scale(' + this.value + '%)'); let zoom = document.getElementById('zoom'); if (this.value == 100) {zoom.innerText = ''} else {zoom.innerText = this.value + '%'};"
+            autocomplete="off">
+        <code id="zoom" class="nlh"
+            onclick="this.innerText = ''; document.getElementById('zoomR').value = 100; changeStyle('div#content *', 'transform', 'scale(100%)')"></code>
+        &thinsp;|| 1 &lt; 乱数 &lt;&thinsp;<input type="number" min="2" value="35" id="ranLen" onchange="oldRan = [];">
+        =><button class="nlh" onclick="random(document.getElementById('ranLen').value)">乱数を生成</button>
+        : <input type="number" id="ranRes" autocomplete="off">
+    </div><br>
+    <div id="opt">
+        オプション: <button class="nlh" onclick="inputLocStr(optStr, true);">リセット</button> {
+            生成するカードの最小ピクセル数: <input type="number" id="accPx" min="0" autoComplete="off">px, 
+            カードの色: <input type="color" id="color" autoComplete="off">, 
+            カードを開けた時の透明度: <input type="number" id="opac" min="0" max="100" autoComplete="off">%
+        }
+    </div>
+    <div id="exp">
+        <code>ドラック</code>でカード生成、<code>クリック</code>で開閉、
+        <code>ctrl</code> + <code>クリック</code>でカードを削除、
+        <code>alt</code> + <code>クリック</code>で全削除
+    </div>
+    <div id="input"><label
+            style="border: 1px solid; border-radius: 3px; background-color: #eee; padding: 2px 4px; font-size: small;">画像またはPDFファイルを選択...<input
+                type="file" accept="image/*, application/pdf" style="display: none;"
+                onchange="fileRead(this.files[0])"></label>: <small id="fileName">未選択</small>;
+    </div>
+    <div id="content">
+        <div id="hidder"></div>
+    </div>
+    <style>
+        * {
+            transform-origin: 0 0;
+            line-height: 40px;
+            margin: auto 0;
+        }
+
+        .nlh {
+            line-height: normal;
+        }
+
+        div#head {
+            position: fixed;
+            z-index: 3;
+            display: flex;
+            background-color: beige;
+            width: 100vw;
+            height: 40px;
+        }
+
+        code {
+            height: min-content;
+            background-color: #f0eeee;
+            padding: 3px 5px;
+            border-radius: 2px;
+            font-size: smaller;
+            font-weight: bold;
+        }
+
+        div#content {
+            overflow: scroll;
+            resize: vertical;
+            scrollbar-width: none;
+            border: 1px solid;
+            border-radius: 5px;
+            width: calc(100vw - 40px);
+            height: 85vh;
+            margin: 0 10px;
+        }
+
+        div#hidder {
+            position: relative;
+        }
+
+        div#hidder div {
+            position: absolute;
+            z-index: 2;
+        }
+
+        img {
+            z-index: 1;
+            width: calc(100vw - 30px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        input {
+            width: 50px;
+            height: 20px;
+        }
+    </style>
+    <script>
+        const optStr = "accPx: 10; color: #888888; opac: 90.0;";
+        let content = document.getElementById("content");
+        let hidder = document.getElementById("hidder");
+        let strage = localStorage.getItem("card");
+        let mouseS = [];
+        let cardStr = [];
+        let nowData = [];
+        let oldRan = [];
+
+        function inputLocStr(IdDefStr, reset) {
+            IdDefStr.split(/;\s*/).slice(0, -1).forEach(va => {
+                let el = va.split(/:\s*/);
+                if (reset) localStorage.removeItem(el[0]);
+                let node = document.getElementById(el[0]);
+                let locStr = localStorage.getItem(el[0]);
+                if (locStr != null) {
+                    node.value = locStr;
+                } else {
+                    node.value = el[1];
+                    localStorage.setItem(el[0], el[1]);
+                }
+                node.addEventListener("change", function () { localStorage.setItem(el[0], this.value) });
+            });
+        }
+
+        function disCardDeLS() {
+            if (strage != null && strage.split(",").every(el => el.split(".").length == 5)) {
+                cardStr = strage.split(",");
+                cardStr.forEach(el => {
+                    nowData = el.split(".");
+                    hidder.insertAdjacentHTML("afterbegin", `<div value="${el}" style="background-color: ${nowData[4]}; top: ${nowData[0]}px; left: ${nowData[1]}px; width: ${nowData[2]}px; height: ${nowData[3]}px;" onclick="openBtn(this)"></div>`);
+                });
+                nowData = [];
+            }
+        }
+
+        function changeStyle(selector, prop, value) {
+            document.querySelectorAll(selector).forEach(el => {
+                el.style.cssText += ` ${prop}: ${value};`;
+            });
+        }
+
+        function random(max) {
+            let ranRes = document.getElementById("ranRes");
+            if (2 <= max) {
+                if (oldRan.length == max) {
+                    oldRan = [];
+                }
+                let ran = Math.floor(Math.random() * max);
+                while (oldRan.includes(ran)) {
+                    ran = Math.floor(Math.random() * max);
+                }
+                ranRes.value = ran + 1;
+                oldRan.push(ran);
+            } else {
+                ranRes.value = "";
+            }
+        }
+
+        function fileRead(file) {
+            let fr = new FileReader();
+            let fName = document.getElementById("fileName");
+            if (file != null) {
+                if (/image\/.+/.test(file.type)) {
+                    fr.onload = function () {
+                        content.innerHTML = `<div id="hidder"><img src="${fr.result}"><div>`;
+                        content.style.removeProperty("overflow");
+                        hidder = document.getElementById("hidder");
+                        disCardDeLS();
+                    }
+                    fName.innerHTML = "image: " + file.name;
+                    fr.readAsDataURL(file);
+                } else if (file.type == "application/pdf") {
+                    fr.onload = function () {
+                        content.innerHTML = `<iframe id="pdf" src="${fr.result}">`;
+                        content.style.overflow = "hidden";
+                        console.log(document.getElementById("pdf").contentWindow.document);
+                        disCardDeLS();
+                    }
+                    fName.innerHTML = "pdf: " + file.name;
+                    fr.readAsDataURL(file);
+                } else {
+                    content.innerHTML = "";
+                    fName.innerHTML = `<span style="color: red;">このファイルは対応していません。</span>`;
+                }
+            } else {
+                content.innerHTML = "";
+                fName.innerHTML = "未選択";
+            }
+        }
+
+        let ctrl = false;
+        let alt = false;
+
+        window.onkeydown = ev => {
+            if (ev.ctrlKey) {
+                ctrl = true;
+            } else if (ev.altKey) {
+                alt = true;
+            }
+        }
+
+        window.onkeyup = ev => {
+            if (!ev.ctrlKey) {
+                ctrl = false;
+            }
+            if (!ev.ctrlKey) {
+                alt = false;
+            }
+        }
+
+        function openBtn(node) {
+            if (ctrl) {
+                cardStr.splice(cardStr.indexOf(node.value), 1);
+                localStorage.setItem("card", cardStr.join(","));
+                hidder.removeChild(node);
+            } else {
+                node.style.opacity = Math.round(1000 - localStorage.getItem("opac") * 10) / 1000;
+                node.onclick = function () {
+                    closeBtn(node);
+                }
+            }
+        }
+
+        function closeBtn(node) {
+            node.style.opacity = 1;
+            node.onclick = function () {
+                openBtn(node);
+            };
+        }
+
+        function setMouseEv(el) {
+            el.onmousedown = ev => {
+                if (alt) {
+                    if (confirm("カードを全削除しますか？")) {
+                        cardStr = [];
+                        localStorage.removeItem("card");
+                        hidder.innerHTML = "";
+                    }
+                } else {
+                    mouseS = [ev.offsetX, ev.offsetY];
+                }
+            };
+            el.onmouseup = ev => {
+                nowData = [mouseS[0], mouseS[1], ev.offsetX - mouseS[0], ev.offsetY - mouseS[1], localStorage.getItem("color")];
+                if (localStorage.getItem("accPx") < nowData[2] && localStorage.getItem("accPx") < nowData[3]) {
+                    if (!cardStr.includes(nowData.join("."))) {
+                        cardStr.push(nowData.join("."));
+                    }
+                    localStorage.setItem("card", cardStr.join(","));
+                    hidder.insertAdjacentHTML("afterbegin", `<div value="${nowData.join(".")}" style="background-color: ${nowData[4]}; top: ${nowData[0]}px; left: ${nowData[1]}px; width: ${nowData[2]}px; height: ${nowData[3]}px;" onclick="openBtn(this)"></div>`);
+                }
+                mouseS = [];
+                nowData = [];
+            };
+        }
+
+        setMouseEv(hidder);
+        inputLocStr(optStr);
+        disCardDeLS();
+    </script>
+</body>
+
+</html>

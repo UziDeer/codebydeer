@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ランダム音符の生成</title>
+</head>
+
+<body style="word-wrap: break-word;">
+    <div
+        style="display: block; width: 100%; height: min-content; top: 0; padding: 5px; position: fixed; background-color: whitesmoke;">
+        <input type="button" id="Button" value="デバック" onclick="debug()">
+    </div>
+    <div style="height: 36px;"></div>
+    <canvas id="canvas" width="850px" height="440px" style="border: 1px solid black; border-radius: 5px;"></canvas>
+    <div id="div"></div>
+    <script>
+        let div = document.getElementById("div");
+        let canvas = document.getElementById("canvas");
+        let ctx = canvas.getContext("2d");
+        let fullMusic = [];
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+            const y = 200 + i * 10;
+            ctx.moveTo(0, y);
+            ctx.lineTo(850, y);
+        }
+        ctx.stroke();
+        function writeNote(index, a) {//n:from0, a:int
+            let x = 10 + index * 20;
+            let y = 225 - a * 5;
+            ctx.fillRect(x, y - 1, 1, 3);
+            ctx.fillRect(x + 11, y - 20, 1, 22);
+            ctx.fillRect(x + 1, y - 2, 1, 5);
+            ctx.fillRect(x + 10, y - 2, 1, 5);
+            ctx.fillRect(x + 4, y - 4, 4, 1);
+            ctx.fillRect(x + 4, y + 4, 4, 1);
+            ctx.fillRect(x + 2, y - 3, 8, 7);
+            ctx.beginPath();
+            for (let i = 0; i < 450; i += 10) {
+                if (y <= i && i < 200 || 240 < i && i <= y) {
+                    ctx.moveTo(x - 2, i);
+                    ctx.lineTo(x + 14, i);
+                }
+            }
+            ctx.stroke();
+        }
+        function ran(FromZeroToMax) {
+            return Math.floor(Math.random() * (FromZeroToMax + 1));
+        }
+        function makeOneNote() {
+            let base = [];
+            for (let a = 0; a < 8; a++) {
+                if (ran(3) == 0) {
+                    base[a] = 0;
+                } else {
+                    base[a] = ran(15);
+                }
+            }
+            let ranNum = ran(15);
+            if (ranNum >= 8) {
+                ranNum -= 16;
+            }
+            base.forEach(function (el, ind) {
+                base[ind] = el + ranNum;
+            });
+            return base;
+        }
+        function debug() {
+            let oneLoopNote = [];
+            let i = 0;
+            while (i < 4) {
+                let arr = makeOneNote();
+                for (let j = 0; j < ran(1) + 1 && i < 4; j++) {
+                    oneLoopNote = oneLoopNote.concat(arr);
+                    i++;
+                }
+            }
+            console.log(oneLoopNote);
+            oneLoopNote.forEach(function (el, index) {
+                div.innerText += el + ", ";
+                writeNote(index, el);
+            });
+        }
+    </script>
+    <script>
+        let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let osl = audioCtx.createOscillator();
+    </script>
+</body>

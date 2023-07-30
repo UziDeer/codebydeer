@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="UziDeer">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>復元化エンジン-PC</title>
+    <link rel="stylesheet" href="index/style.css">
+    <script src="index/mathFunc.js"></script>
+    <script src="index/common.js"></script>
+</head>
+
+<body style="text-align: center;">
+    <header>
+        <h1>暗号の解凍</h1><br><small><b><a href="EnCoder.html">暗号の作成はこちらから</a></b></small>
+    </header>
+    <h2>DeCode:<small><i>復元</i></small></h2>
+    <textarea id="before" placeholder="暗号を入力" rows="9" max="9999"></textarea><br>
+    <table style="margin: auto; margin-top: 10px;">
+        <tr>
+            <td><input type="file" accept="text/plain"
+                    style="display: inline-block; margin: auto; opacity: 0; width: 200px;" onchange="inputFile(this)">
+            </td>
+        </tr>
+        <tr>
+            <td><button
+                    style="pointer-events: none; width: 200px; transform: translateY(-30px);">暗号テキストファイルを選択…</button>
+            </td>
+        </tr>
+    </table>
+    <input type="number" id="enVar" min="100" max="3843" placeholder="環境変数を入力"><br>
+    <input type="button" value="実行" onclick="DeCodeGo()">
+    <small id="try"></small>
+    <h2>Result:<small><i>結果</i></small></h2>
+    <input type="button" value='テキストをコピー' onclick="copyTxt('div','TesTxt1')"> <small id='TesTxt1'></small>
+    <br>
+    <div id="div"><br></div><br>
+    <input type="button" value='テキストをコピー' onclick="copyTxt('div','TesTxt2')"> <small id='TesTxt2'></small>
+    <script>
+        function DeCodeGo() {
+            let before = document.getElementById('before').value;
+            let enVar = document.getElementById('enVar').value;
+            let testDiv = document.getElementById('try');
+            let div = document.getElementById('div');
+            if (before == '') {
+                testDiv.innerText = '文字列を入力してください。';
+                div.innerText = '\n';
+            } else if (!(99 < enVar && enVar < 3844)) {
+                testDiv.innerText = '正しい環境変数を入力してください。';
+                div.innerText = '\n';
+            } else {
+                let state = DeCodeDo(before, enVar);
+                testDiv.innerHTML = state[1].replaceAll('$e', '<span style="color: red;">').replaceAll('$/e', '</span>');
+                div.innerHTML = state[0].replaceAll('$n', '<br>').replace('&#[環境変数]', '<b>' + state[2] + '</b>').replaceAll('$c', '<b>').replaceAll('$/c', '</b>');
+                if (state[0].match(/^(\t| )+$/) != null) {
+                    testDiv.innerText += '空文字のため、改行文字を末尾に追加しました。';
+                    div.innerText += '\n';
+                }
+            }
+        }
+    </script>
+    <footer>ⒸUziDeer</footer>
+</body>
+
+</html>

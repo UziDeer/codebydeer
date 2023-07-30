@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>長文表示</title>
+</head>
+
+<body style="text-align: center; margin: 0px; word-wrap: break-word;">
+    <br>
+    <div><textarea id="div" rows="5" style="width: 98%;" onchange="InputTxt()"></textarea></div>
+    <div id="div" style="display: none;"><!--ここに文字を入力--></div><br>
+    <input type="number" id="max" min="1" style="width: 64px;" onchange="go(0)">文字ずつ表示(全<span id="len">0</span>文字)<br>
+    <input type="button" value="UniCodeすべての文字を表示" onclick="allStr()">
+    <div id="selector1"></div><br>
+
+    <div id="result"
+        style="width: 98%; margin: auto; height: auto; border-width: 1px; border-style: solid; border-color: black; border-radius: 3px; text-align: left; background-color: white;">
+    </div>
+
+    <br>
+    <div id="selector2"></div><br>
+    <script>
+        let ElDiv = document.getElementById('div');
+        let max = document.getElementById('max');
+        let str = '';
+        let page = 0;
+        function go(nextPage) {
+            max = document.getElementById('max');
+            if (max.value < 1) {
+                max.value = 10000;
+            }
+            max = Number(max.value);
+            const t = Math.floor(Math.abs(str.length - 1) / max) + 1;
+            let option = '';
+            for (let i = 0; i < t; i++) {
+                option += `<option value=${i}>${i + 1}ページ目(${i * max + 1}~${i * max + max}文字目)</option>`;
+            }
+            page = Number(nextPage);
+            function make(num) {
+                let div = document.getElementById('selector' + num);
+                div.innerHTML = '';
+                if (page != 0) {
+                    div.innerHTML += `<input type="button" value="<" onclick="go(${page - 1})">`;
+                }
+                div.innerHTML += `<select id="select${num}" onchange="go(this.value)">${option}</select>`;
+                if (page != t - 1) {
+                    div.innerHTML += `<input type="button" value=">" onclick="go(${page + 1})">`;
+                }
+                document.getElementById('select' + num).value = page;
+            }
+            make(1);
+            make(2);
+            let cutStr = str.slice(page * max, page * max + max);
+            let result = document.getElementById('result');
+            if (cutStr.match(/^ *$/)) {
+                result.innerText = "\n";
+            } else {
+                result.innerText = cutStr;
+            }
+        }
+        function InputTxt() {
+            if (ElDiv.value != '') {
+                str = ElDiv.value;
+            } else if (ElDiv.innerText != '') {
+                str = ElDiv.innerText;
+            } else {
+                str = '';
+            }
+            document.getElementById('len').innerText = str.length;
+            page = 0;
+            go(0);
+        }
+        function allStr() {
+            max = document.getElementById('max');
+            ElDiv.value = "";
+            max.value = 5000;
+            let i = 0;
+            let inter = setInterval(function(){
+                for (let j = 0; j < 5000 && (i + j) < 65536; j++) {
+                    ElDiv.value += String.fromCharCode(i + j);
+                }
+                InputTxt();
+                if (i == 70000) {
+                    clearInterval(inter);
+                }
+                i += 5000;
+            }, 0);
+        }
+        InputTxt();
+    </script>
+</body>
+
+</html>

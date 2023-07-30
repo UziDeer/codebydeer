@@ -1,0 +1,20 @@
+<body>
+    <h1>404 Not Found</h1>
+</body>
+<script>
+    let pass = ["q", "w", "e", "r", "t", "y", "Enter"];
+    let len = 0;
+    document.onkeydown = ev => {
+        if (ev.key == "BackSpace") {
+            len = 0;
+        } else if (ev.key == pass[len]) {
+            len++;
+            if (len == pass.length) {
+                len = 0;
+                location.replace("http://" + new URLSearchParams(location.href.split("?")[1]).get("url"));
+            }
+        } else {
+            len = 0;
+        }
+    }
+</script>

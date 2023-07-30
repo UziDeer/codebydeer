@@ -1,0 +1,81 @@
+<button onclick="exe()">start</button>
+<button onclick="s()">stop</button>
+<button onclick="location.reload()">reset</button>
+<div id="bef"></div>
+<hr>
+<div id="res"></div>
+<script>
+    let bef = document.getElementById("bef");
+    let res = document.getElementById("res");
+
+    let hashArr = [[], []];
+    let findedArr = [];
+    let inter = 0;
+    let putUint8 = new Uint8Array(1);
+
+    function textSplit(array) {
+        let newArr = [];
+        let preArr = [];
+        new Uint8Array(array).forEach((el, i) => {
+            preArr.push(("00" + el.toString(16)).slice(-2));
+            if (i % 8 == 7) {
+                newArr.push(preArr.join(""));
+                preArr = [];
+            }
+        });
+        newArr.push(preArr.join(""));
+        preArr = [];
+        return newArr;
+    }
+
+    function incrUint8() {
+        let up = true;
+        for (let i = putUint8.length - 1; i >= 0; i--) {
+            if (up) {
+                if ((putUint8[i] += 1) == 256) {
+                    up = true;
+                } else {
+                    up = false;
+                }
+            }
+        }
+        if (up) {
+            putUint8 = new Uint8Array(putUint8.length + 1);
+        }
+    }
+
+    function addHashData(text, hash) {
+        if (hashArr[0].includes(hash)) {
+            let index = hashArr[0].indexOf(hash);
+            console.log(index);
+            if (findedArr[index] == undefined) {
+                findedArr[index] = [];
+            }
+            findedArr[index].push(text);
+        }
+        hashArr[0].push(text);
+        hashArr[1].push(hash);
+    }
+
+    function getHash(Uint8) {
+        let hashV = crypto.subtle.digest('SHA-512', Uint8);
+        hashV.then(hash => {
+            let befArr = textSplit(Uint8);
+            let resArr = textSplit(hash);
+            addHashData(befArr.join(""), resArr.join(""));
+            bef.innerText = befArr.join("\n");
+            res.innerText = resArr.join("\n");
+        });
+    };
+
+    function exe() {
+        inter = setInterval(function () {
+            getHash(putUint8);
+            incrUint8();
+        });
+    }
+
+    function s() {
+        clearInterval(inter);
+    }
+</script>

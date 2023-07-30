@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カウンター</title>
+</head>
+<body style="text-align: center;">
+    <br><h1 id="num">0</h1>
+    <button onclick="numAdd('inc')">カウント</button><br>
+    <button onclick="numAdd('dec')">マイナス</button><br>
+    <button onclick="numAdd('res')">リセット</button>
+    <style>
+        button {
+            width: 50%;
+            min-width: 330px;
+            height: 80px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background-color: whitesmoke;
+            box-shadow: 2px 2px 2px 2px gainsboro;
+            margin: 10px;
+        }
+    </style>
+    <script>
+        let dis = document.getElementById("num");
+        function numAdd(mode) {
+            if (mode == "inc") {
+                dis.innerText = Number(dis.innerText) + 1;
+            } else if (mode == "dec" & dis.innerText != "0") {
+                dis.innerText = Number(dis.innerText) - 1;
+            } else if (mode == "res") {
+                dis.innerText = 0;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="htmlTitle">jsリーダー</title>
+</head>
+
+<body>
+    <form method="get">
+        <textarea></textarea><br>
+        <input type="text"><br>
+        <input type="search"><br>
+        <input type="password"><br>
+        <input type="date"><br>
+        <input type="checkbox">
+        <input type="checkbox">
+        <input type="radio">
+        <input type="radio"><br>
+        <input type="range"><br>
+        <input type="color"><br>
+        <input type="file" onchange="inputReadFile(this.files)" multiple><br>
+        <input type="button" value="シンプルボタン"><br>
+        <input type="reset"><br>
+        <input type="submit"><br>
+    </form>
+    <hr>
+    <form method="post">
+        <textarea></textarea><br>
+        <input type="text"><br>
+        <input type="search"><br>
+        <input type="password"><br>
+        <input type="date"><br>
+        <input type="checkbox">
+        <input type="checkbox">
+        <input type="radio">
+        <input type="radio"><br>
+        <input type="range"><br>
+        <input type="color"><br>
+        <input type="file" onchange="inputReadFile(this.files)" multiple><br>
+        <input type="button" value="シンプルボタン"><br>
+        <input type="reset"><br>
+        <input type="submit"><br>
+    </form>
+    <div id="defDiv" class="border"></div>
+    <div id="defResult" class="border"></div>
+    <hr>
+    <img id="defImageFlame">
+    <div id="additionalImage"></div>
+    <hr>
+    <details>
+        <summary></summary>
+        <iframe></iframe>
+    </details>
+    <hr>
+    <h3>以下追加HTML</h3>
+    <hr>
+    <div id="additionalHTML">
+
+    </div>
+    <div id="ScriptAndStyle"></div>
+    <style>
+        .border {
+            border: solid 1px;
+            border-radius: 5px;
+        }
+        
+        .flex {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    </style>
+    <script>
+        let params = new URLSearchParams(location.href.split("?")[1]);
+        let getForm = document.querySelector("form[method=get]");
+        let postForm = document.querySelector("form[method=post]");
+        let div = document.getElementById("defDiv");
+        let res = document.getElementById("defResult");
+        let image = document.getElementById("defImageFlame");
+        let additionalImages = "";
+        let inputFilesData = {};
+
+        function ScriptAndStyle(script, style) {
+            let div = document.getElementById("ScriptAndStyle");
+            let scriptEl = document.createElement("script");
+            scriptEl.src = script;
+            div.appendChild(scriptEl);
+            let styleEl = document.createElement("link");
+            styleEl.rel = "stylesheet";
+            styleEl.href = style;
+            div.appendChild(styleEl);
+        }
+
+        function QERSLC(query) {
+            return document.querySelector(query);
+        }
+
+        function inputReadFile(files) {
+            inputFilesData = [];
+            let wait = false;
+            let i = 0;
+            let eachFile = setInterval(function () {
+                if (files.length <= i) {
+                    clearInterval(eachFile);
+                    try {
+                        readedInputFiles(inputFilesData);
+                    } catch (error) {
+                        console.info("%cYou can use the option %cfunction%c: %c\"%creadedInputFiles%c(%cfilesData%c)%c\" %cwith the %cvariable%c: %c\"%cinputFilesData%c\"%c.", "color: magenta", "color: yellowgreen", "color: black", "color: rosybrown", "color: darkkhaki", "color: black", "color: aqua", "color: black", "color: rosybrown", "color: magenta", "color: yellowgreen", "color: black", "color: rosybrown", "color: aqua", "color: rosybrown", "color: black");
+                    }
+                } else if (!wait) {
+                    wait = true;
+                    let read = 0;
+                    let fr = [new FileReader(), new FileReader(), new FileReader(), new FileReader()];
+                    fr.forEach(el => { el.onload = function () { read++ } });
+                    fr[0].readAsDataURL(files[i]);
+                    fr[1].readAsText(files[i]);
+                    fr[2].readAsBinaryString(files[i]);
+                    fr[3].readAsArrayBuffer(files[i]);
+                    let inter = setInterval(function () {
+                        if (read == fr.length) {
+                            clearInterval(inter);
+                            let preObj = { dataURL: fr[0].result, txt: fr[1].result, binStr: fr[2].result, ArrBuf: fr[3].result };
+                            inputFilesData.push(preObj);
+                            i++;
+                            wait = false;
+                        }
+                    });
+                };
+            }, 1);
+        }
+
+        function addHTML(htmlStr) {
+            document.getElementById("additionalHTML").innerHTML += htmlStr;
+        }
+
+        document.querySelectorAll("form").forEach(el => { el.action = location.href });
+        document.getElementById("htmlTitle").innerText = "jsリーダー: " + params.get("script");
+        if (/\d+/.test(params.get("addImgLen"))) {
+            for (let i = 0; i < Number(params.get("addImgLen")); i++) {
+                document.getElementById("additionalImage").insertAdjacentHTML("beforeend", "<img class='additionalImageElements'>");
+            }
+            additionalImages = document.getElementsByClassName("additionalImageElements");
+        }
+        ScriptAndStyle(params.get("script"), params.get("style"));
+    </script>
+</body>
+
+</html>
