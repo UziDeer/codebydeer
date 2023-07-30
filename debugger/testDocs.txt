@@ -1,8 +1,6 @@
-ぺてのことが大好き。付き合ってほしい。僕の隣にいてほしい。ずっと。でも、今これを言ったらぺてに引かれると思う。だから、こんな形にしたんだ。 伝わらないと思うけど、この願いが叶ったらうれしいな、、、。
+こんにちは、codebydeer運営、UziDeerです。今回、このｼﾞｪﾈﾚｰﾀｰを作りました。どうぞ、お使いください。
 
-こんにちは、シジウカ狐鐘こと、UziDeerです。今回、このｼﾞｪﾈﾚｰﾀｰを作りました。どうぞ、お使いください。
-
-Anyway, this language can pass any message in private. but this message is so fragile and easy to decipher, so this is unsuitable to Important message, for example password.
+Hello everyone! I'm UziDeer, made this site: "codebydeer". Enjoy♪
 
 ０0１1２2３3４4５5６6７7８8９9０
 
