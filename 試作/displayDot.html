@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電光掲示</title>
+</head>
+<body style="text-align: center;">
+    <h2>疑似電光掲示盤作製機</h2>
+    <details open="">
+        <summary>枠の画像</summary><hr>
+        1dotあたりの枠(電光掲示でない部分)を、<span style="color: red;">赤(#ff0000)</span>で塗りつぶした画像をアップロードしてください。
+        <div id="dirStr" style="font-weight: bold; font-size: small;">アップロードしてください</div>
+        <label>ファイルから<input type="file" accept="image/*"
+                onchange="let fr = new FileReader(); fr.onload = function() {setImg(fr.result)}; fr.readAsDataURL(this.files[0]); qerSlc('#dirStr').innerHTML = 'お待ちください...';"
+                style="display: none;" autocomplete="off"></label><br>
+        <textarea onchange="setImg(this.value);" rows="1" cols="30" id="dataURL" placeholder="dataURLまたはリンクから" autocomplete="off"></textarea><br>
+        <details>
+            <summary>画像を直接作成・編集</summary><hr>
+            横：<input type="number" id="defW" value="5" min="0">、縦：<input type="number" id="defH" value="5" min="0"><button onclick="cvs.width = qerSlc('#defW').value; cvs.height = qerSlc('#defH').value; ctx.fillStyle = '#f00'; ctx.fillRect(0, 0, cvs.width, cvs.height); setImg(cvs.toDataURL());">作成する</button><br>
+            ※クリックで編集
+            <div id="disImg" style="overflow: hidden; resize: horizontal; width: 150px; height: auto; border: 1px solid black; border-radius: 2px;"><canvas id="cvs" width="0" height="0" style="width: 100%; height: 100%; margin: 0;" onmousemove=""></canvas></div>
+        </details>
+        <img id="img" style="display: none; width: 150px;"><br>
+        <button style="display: none;" id="decide" onclick="if (confirm('この画像の幅が全体の1dotとなります。いいですか？')) {setBase()}">決定</button>
+    </details>
+    <style>
+        body * {
+            scrollbar-width: none;
+            margin: 5px auto;
+        }
+
+        input[type="number"] {
+            width: 50px;
+        }
+
+        label, button {
+            border: 1px solid #888;
+            border-radius: 3px;
+            background-color: #eee;
+            font-size: smaller;
+            padding: 1px 5px;
+            margin: 5px;
+        }
+
+        label:hover, button:hover {
+            background-color: #ddd;
+        }
+
+        details {
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 5px 10px;
+        }
+
+        summary {
+            margin: 0;
+        }
+
+        hr {
+            border-top: none;
+        }
+    </style>
+    <script>
+        function qerSlc(query) {
+            return document.querySelector(query);
+        }
+
+        let cvs = qerSlc("#cvs");
+        let ctx = cvs.getContext("2d");
+        let opt = document.body.classList;
+
+        function gcdRto(asp) {
+            let x = Number(asp[0]);
+            let y = Number(asp[1]);
+            while (y > 0) {
+                let px = x;
+                x = y;
+                y = px % y;
+            }
+            return asp.map(el => el / x);
+        }
+
+        function cvsXY(cvs, x, y) {
+            return {x: Math.floor((x * cvs.width) / cvs.style.width), y: Math.floor((y * cvs.height) / cvs.style.height)};
+        }
+
+        function setImg(dataURL) {
+            let img = qerSlc("#img");
+            qerSlc("#dirStr").innerHTML = "お待ちください...";
+            qerSlc("#decide").style.display = "none";
+            opt.add("wait");
+            img.onerror = function () {
+                cvs.width = 0;
+                cvs.height = 0;
+                qerSlc("#dirStr").innerHTML = "<span style='color: red;'>非対応の画像です</span>";
+                opt.remove("wait");
+            }
+            img.onload = function () {
+                cvs.width = img.naturalWidth;
+                cvs.height = img.naturalHeight;
+                ctx.drawImage(img, 0, 0);
+                for (let i = 0; i < array.length; i++) {
+                    
+                }
+                let asp = gcdRto([img.naturalWidth, img.naturalHeight]);
+                qerSlc("#disImg").style.aspectRatio = String(asp[0]) + "/" + String(asp[1]);
+                qerSlc("#img").style.aspectRatio = String(asp[0]) + "/" + String(asp[1]);
+                qerSlc("#decide").style.display = "inline";
+                qerSlc("#dirStr").innerHTML = "<span style='color: #0f0;'>OK</span>";
+                opt.remove("wait");
+            }
+            img.src = dataURL;
+            qerSlc("#dataURL").value = dataURL;
+        }
+    </script>
+</body>
+</html>

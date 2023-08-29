@@ -98,10 +98,11 @@
             let x = Number(asp[0]);
             let y = Number(asp[1]);
             while (x % y != 0) {
+                let px = x;
                 x = y;
-                y = x % y;
-                console.log(x, y);
+                y = px % y;
             }
+            console.log(x, y);
             return asp.map(el => el / x);
         }
 

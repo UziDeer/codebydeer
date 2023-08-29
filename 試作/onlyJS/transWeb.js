@@ -1,15 +1,7 @@
-let langage = "ja";
-let nowUrl = String(location);
-let reqestStr = nowUrl.split("//")[1].split("/");
-let reqestFile = reqestStr[1];
-for (let f = 2; f < reqestStr.length; f++) {
-    reqestFile += "/" + reqestStr[f];
-};
-let resParams = new URLSearchParams(nowUrl.split("?")[1]);
-let transSet = [["sch", "http"], ["sl", "auto"], ["tl", langage]];
-for (let i = 0; i < transSet.length; i++) {
-    const el = transSet[i];
-    resParams.append("_x_tr_" + el[0], el[1]);
-};
-window.open("https://" + reqestStr[0].replaceAll(".", "-") + ".translate.goog/" + reqestFile + "?" + resParams.toString(), "_blank");
-window.location.reload();
+function _cbd_tr() {
+let _cbd_la = "ja";
+let _cbd_par = new URLSearchParams(location.search);
+[["sch", location.protocol.slice(0, -1)], ["sl", "auto"], ["tl", _cbd_la]].forEach(el => {_cbd_par.append("_x_tr_" + el[0], el[1])});
+window.open("https://" + location.host.replaceAll("-", "--").replaceAll(".", "-") + ".translate.goog" + location.pathname + "?" + _cbd_par.toString(), "_blank");
+}
+_cbd_tr();

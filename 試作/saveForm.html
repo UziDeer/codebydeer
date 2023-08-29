@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ふぉーむ</title>
+</head>
+
+<body style="background-color: bisque;">
+    <div id="_CodeByDeer-box" class="_CodeByDeer-write">
+        <div id="_CodeByDeer-dirBox" class="_CodeByDeer-shrink">
+            <div id="_CodeByDeer-dirWin"></div>
+        </div>
+        <div id="_CodeByDeer-window" class="">
+            <div>
+                <label class="_CodeByDeer-read" onclick="_CodeByDeer_classCh('#_CodeByDeer-box', '_CodeByDeer-read', '_CodeByDeer-write')">読み込み</label
+                ><label class="_CodeByDeer-write" onclick="_CodeByDeer_classCh('#_CodeByDeer-box', '_CodeByDeer-write', '_CodeByDeer-read')">書き出し</label>
+            </div>
+            <div class="_CodeByDeer-winTxt" style="flex-grow: 1; text-align: center; padding: 0 10px;">
+                <span id="_CodeByDeer-winTxt">フォームを選択</span>
+                (<span id="_CodeByDeer-slcNow" style="color: #0f0;">0/0</span>表示中, 
+                <span id="_CodeByDeer-slcLen" style="color: #f00;">0/0</span>選択中)
+                <button>⮝</button>
+                <button>⮟</button>
+            </div>
+            <div style="padding-right: 5px;">
+                <button id="_CodeByDeer-btnNext" onclick="_CodeByDeer_next()">次へ</button> <button onclick="document.getElementById('_CodeByDeer-window').classList.add('_CodeByDeer-shrink')">縮小</button> <button onclick="_CodeByDeer_end()">終了</button>
+            </div>
+            <label onclick="document.getElementById('_CodeByDeer-window').classList.remove('_CodeByDeer-shrink')">展開</label>
+        </div>
+        <style>
+            #_CodeByDeer-box * {
+                --max-width: calc(100vw - 14vw);
+                --xCenter: calc(50vw - 50%);
+                --yCenter: calc(50vh - 50%);
+                scrollbar-width: none;
+                color: #000;
+                font-size: small;
+            }
+
+            #_CodeByDeer-box #_CodeByDeer-dirBox {
+                position: fixed;
+                z-index: 1073741823;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: #0006;
+            }
+
+            #_CodeByDeer-box #_CodeByDeer-dirWin {
+                --win-height: 400px;
+                transform: translate(var(--xCenter), var(--yCenter));
+                background-color: white;
+                border-radius: 20px;
+                min-width: 40vw;
+                max-width: var(--max-width);
+                min-height: var(--win-height);
+                overflow: scroll;
+                scrollbar-width: none;
+            }
+
+            #_CodeByDeer-box #_CodeByDeer-dirBox._CodeByDeer-shrink {
+                display: none;
+            }
+
+            #_CodeByDeer-box #_CodeByDeer-window {
+                --win-height: 40px;
+                position: fixed;
+                top: 10px;
+                left: 0;
+                transform: translate(var(--xCenter), calc(-100% - 10px));
+                transition: 0.2s all ease-out;
+                z-index: 1073741824;
+                display: flex;
+                flex-wrap: wrap;
+                min-height: var(--win-height);
+                line-height: var(--win-height);
+                max-width: calc(var(--max-width) - 10px);
+                padding: 0 5px;
+                background-color: white;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0px 0px 5px -1px #000;
+                scrollbar-width: none;
+            }
+
+            #_CodeByDeer-box #_CodeByDeer-window._CodeByDeer-trans {
+                transform: translate(var(--xCenter), 0);
+            }
+        
+            #_CodeByDeer-box #_CodeByDeer-window label {
+                display: inline-block;
+                height: var(--_CodeByDeer-win-height);
+                padding: 0 5px;
+                font-size: small;
+            }
+        
+            #_CodeByDeer-box._CodeByDeer-write label._CodeByDeer-write,
+            #_CodeByDeer-box._CodeByDeer-read label._CodeByDeer-read {
+                background-color: #ddd;
+            }
+
+            #_CodeByDeer-box #_CodeByDeer-window._CodeByDeer-shrink {
+                max-width: fit-content;
+            }
+
+            #_CodeByDeer-box #_CodeByDeer-window._CodeByDeer-shrink>div {
+                display: none;
+            }
+
+            #_CodeByDeer-box #_CodeByDeer-window>label {
+                display: none;
+            }
+
+            #_CodeByDeer-box #_CodeByDeer-window._CodeByDeer-shrink>label {
+                display: block;
+            }
+
+            @media (max-width: 575px) {
+                #_CodeByDeer-box ._CodeByDeer-winTxt {
+                    width: 100%;
+                }
+            }
+
+            form {
+                border: 5px dashed rgba(22, 22, 250, 64);
+            }
+
+            form._CodeByDeer-slcNow {
+                border-color: #0f0;
+            }
+        
+            form._CodeByDeer-slcForm {
+                border-color: #f00;
+            }
+        </style>
+    </div>
+    <form method="get" class="">
+        <input type="text" name="any" value="１いあ">
+        <textarea name="" id="" cols="50" rows="30"></textarea>
+    </form>
+    <a href="data:,anyStringwww" download="downloader/any.txt" id="any">ダウンロード</a>
+    <script>
+        function _CodeByDeer_formSlc(form, i) {
+            form.classList.toggle("_CodeByDeer-slcNow");
+            document.getElementById("_CodeByDeer-slcNow").innerText = i + "/" + document.getElementsByTagName("form").length;
+        }
+
+        function _CodeByDeer_next() {
+            let form = document.querySelectorAll("form._CodeByDeer-slcForm");
+            if (form.length == 0) {
+                let winTxt = document.getElementById("_CodeByDeer-winTxt");
+                winTxt.innerHTML = "<span style='color: red;'>フォームを一つ以上選択</span>";
+                setTimeout(function() { winTxt.innerText = "フォームを選択" }, 3000);
+            } else {
+                document.getElementById("_CodeByDeer-dirBox").classList.remove("_CodeByDeer-shrink");
+            }
+            console.log(form);
+        }
+
+        function _CodeByDeer_classCh(querySelector, after, before) {
+            let el = document.querySelector(querySelector).classList;
+            if (before != undefined) {
+                el.remove(before);
+            }
+            el.add(after);
+        }
+
+        function _CodeByDeer_end() {
+            document.getElementById("_CodeByDeer-window").classList.remove("_CodeByDeer-trans");
+            document.querySelectorAll("form").forEach(el => {
+                el.classList.remove("_CodeByDeer-slcForm");
+            });
+            setTimeout(function() {
+                document.getElementById("_CodeByDeer-box").remove();
+            }, 200);
+        }
+
+        function _CodeByDeer_exe() {
+            document.body.insertAdjacentHTML("afterbegin", `
+
+            `);
+            document.querySelectorAll("form").forEach((el, i) => {
+                el.onclick = function() { _CodeByDeer_formSlc(this, i) };
+            });
+            document.getElementById("_CodeByDeer-slcNow").innerText = "0/" + document.getElementsByTagName("form").length;
+            document.getElementById("_CodeByDeer-slcLen").innerText = "0/" + document.getElementsByTagName("form").length;
+            setTimeout(function () { document.getElementById("_CodeByDeer-window").classList.add("_CodeByDeer-trans") }, 100);
+        }
+        _CodeByDeer_exe();
+    </script>
+    <script src="debug.js"></script>
+</body>
+
+</html>

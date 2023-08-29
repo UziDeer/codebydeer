@@ -1,0 +1,67 @@
+<input type="file" onchange="f(this.files)">
+<h3>text</h3>
+<textarea id="txt"></textarea>
+<h3>dataURL</h3>
+<textarea id="dataURL"></textarea>
+<h3>Uint8Array</h3>
+<textarea id="Uint8Arr"></textarea>
+<h3>Uint16Array</h3>
+<textarea id="Uint16Arr"></textarea>
+<h3>Uint32Array</h3>
+<textarea id="Uint32Arr"></textarea>
+<style>
+    textarea {
+        width: calc(100vw - 30px);
+        height: 200px;
+    }
+</style>
+<script>
+    async function f(file) {
+        let fr = new FileReader();
+        await new Promise(res => {
+            fr.onload = function () {
+                console.log(fr.result);
+                document.getElementById("dataURL").value = fr.result;
+                res();
+            };
+            fr.readAsDataURL(file[0]);
+        });
+        
+        await new Promise(res => {
+            fr.onload = function () {
+                console.log(fr.result);
+                document.getElementById("txt").value = fr.result;
+                res();
+            };
+            fr.readAsText(file[0]);
+        });
+
+        await new Promise(res => {
+            fr.onload = function () {
+                try {
+                    console.info(new Uint8Array(fr.result));
+                    document.getElementById("Uint8Arr").value = new Uint8Array(fr.result).join(", ");
+                } catch (error) {
+                    console.log(error);
+                    document.getElementById("Uint8Arr").value = "error";
+                }
+                try {
+                    console.info(new Uint16Array(fr.result));
+                    document.getElementById("Uint16Arr").value = new Uint16Array(fr.result).join(", ");
+                } catch (error) {
+                    console.log(error);
+                    document.getElementById("Uint16Arr").value = "error";
+                }
+                try {
+                    console.info(new Uint32Array(fr.result));
+                    document.getElementById("Uint32Arr").value = new Uint32Array(fr.result).join(", ");
+                } catch (error) {
+                    console.log(error);
+                    document.getElementById("Uint32Arr").value = "error";
+                }
+                res();
+            };
+            fr.readAsArrayBuffer(file[0]);
+        });
+    }
+</script>

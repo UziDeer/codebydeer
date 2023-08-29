@@ -9,76 +9,8 @@
 </head>
 
 <body>
-    <div id="index"></div>
-    <script>
-        function go(beforeString, HTMLid, customNum) {
-            function push(befNum) {
-                let result = "";
-                let indexNum = String(befNum);
-                let binResult = "";
-                while (indexNum != "0") {
-                    binResult += String(indexNum.slice(-1) % 2);
-                    indexNum = String(Math.floor(indexNum / 2));
-                }
-                let befbinStr = binResult.split("").reverse().join("");
-                console.log(befbinStr);
-                if (befbinStr.match(/^[0-1]+$/) == null) {
-                    result = "error";
-                } else {
-                    let baseLen = 1;
-                    for (let i = 0; i < befbinStr.length; i++) {
-                        let baseStr = befbinStr.slice(i, i + 1);
-                        let nextStr = befbinStr.slice(i + 1, i + 2);
-                        if (baseStr == nextStr && baseLen != 9) {
-                            baseLen++;
-                        } else if (baseLen == 1) {
-                            result += baseStr;
-                        } else {
-                            result += baseStr + baseLen;
-                            baseLen = 1;
-                        }
-                    }
-                }
-                console.log(result);
-            }
-            let befNum = "";
-            try {
-                if (customNum.match(/^[0-9]+$/) != null) {
-                    befNum = customNum;
-                }
-            } catch (error) {
-                for (let i = 0; i < beforeString.length; i++) {
-                    befNum += beforeString.charCodeAt(i);
-                }
-            }
-            console.log(befNum);
-            document.getElementById(HTMLid).innerText = push(befNum);
-        }
-        go("", "index", "");
-        let s = 9917199254670333;
-        function f() {
-            go("", "index", String(s));
-            s += 100;
-        }
-        let a = setInterval(f, 50);
-        function stop(inter) {
-            clearInterval(inter);
-        }
-        function half(num) {
-            let indexNum = String(num);
-            let margin = 0;
-            let binary = "";
-            let result = "";
-            while (indexNum != "0") {
-                result += String(Math.floor((margin * 10 + indexNum.slice(0, 1)) / 2));
-                margin = indexNum.slice(0, 1) % 2;
-                binary += margin;
-                indexNum = indexNum.slice(1);
-            }
-            result = binary.split("").reverse().join("");
-            console.log(result);
-        }
-    </script>
+    
+    <textarea onchange=""></textarea>
 </body>
 
 </html>

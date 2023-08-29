@@ -1,0 +1,14 @@
+<textarea id="input" style="width: calc(100vw - 30px);"></textarea><br>
+<canvas width="100px" id="cvs"></canvas><br>
+<img id="webp"><canvas width="100px" id="webpCvs"></canvas>
+<div>ブロック長: <input type="range" value="100" onchange="width = this.value"></div>
+<hr>
+<div id="result">
+    <a id="resLink"><span id="resURL"></span></a>
+</div>
+<script>
+    let cvs = document.getElementById("cvs");
+    let ctx = cvs.getContext("2d");
+    let width = 100;
+    console.log(new URLSearchParams(location.search).get("s"));
+</script>

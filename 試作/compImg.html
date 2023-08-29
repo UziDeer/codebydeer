@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=2.0">
+    <title>画像一致</title>
+</head>
+<body>
+    <div style="width: calc(100vw - 20px); overflow: scroll;">
+        <table style="border-collapse: collapse; min-width: calc(100% - 2px);">
+            <tr id="files"></tr>
+            <tr id="imgs"></tr>
+        </table>
+    </div>
+    <h4 id="result" style="border: 1px solid gray; line-height: 30px;"><br></h4>
+    <h4>
+        <button onclick="mkComp()">追加</button>
+        <button onclick="rdComp()">削除</button>
+    </h4>
+    <style>
+        body {
+            text-align: center;
+        }
+        body * {
+            scrollbar-width: none;
+        }
+        td {
+            padding: 10px;
+            border: 1px solid gray;
+            max-width: calc(100vw - 20px);
+            overflow-y: scroll;
+            word-break: break-word;
+        }
+        img {
+            width: 250px;
+        }
+    </style>
+    <script>
+        function q(query) { return document.querySelector(query) };
+        function qA(query) { return document.querySelectorAll(query) };
+        let nowLen = 0;
+        let data = [];
+        function mkComp() {
+            let i = nowLen;
+            nowLen++;
+            q("#files").insertAdjacentHTML("beforeend", `<td class="t${i}"><input type="file" onchange="let fr = new FileReader(); fr.onload = function() {compare(fr.result, ${i})}; fr.readAsDataURL(this.files[0])"><button onclick="rdComp(${i})" style="float: right;">削除</button></td>`);
+            q("#imgs").insertAdjacentHTML("beforeend", `<td class="t${i}"><img><canvas style="display: none;"></canvas></td>`);
+        }
+        function rdComp(i = nowLen - 1) {
+            data[i] = null;
+            if (nowLen > 0) {
+                nowLen--;
+            } else {
+                nowLen = 0;
+            }
+            qA(".t" + i).forEach(el => el.remove());
+            test();
+        }
+        function compare(dataURL, i) {
+            let img = q(`.t${i} img`);
+            let cvs = q(`.t${i} canvas`);
+            let ctx = cvs.getContext("2d");
+            if (img == null) {
+                img = new Image();
+                q("#imgs .t" + i).insertAdjacentElement("afterbegin", img);
+            }
+            img.onload = function () {
+                cvs.width = img.naturalWidth;
+                cvs.height = img.naturalHeight;
+                ctx.drawImage(img, 0, 0);
+                data[i] = cvs.toDataURL("image/png");
+                if (!/^data:image\/png;/.test(data[i])) {
+                    data[i] = null;
+                    img.outerHTML = `<span style="color: #ff0000">エラーが発生しました</span>`;
+                }
+                test();
+            }
+            img.onerror = function () {
+                data[i] = dataURL;
+                img.outerText = dataURL;
+                test();
+            }
+            img.src = dataURL;
+        }
+        function test() {
+            setTimeout(function () {
+                if (data.every(el => (data[0] == el || el == null))) {
+                    q("#result").innerHTML = `<span style="color: #00ff00;"><b>一致</b></span>`;
+                } else {
+                    q("#result").innerHTML = `<span style="color: #ff0000;"><b>不一致</b></span>`;
+                }
+            }, 100);
+        }
+        mkComp();
+        mkComp();
+    </script>
+</body>
+</html>

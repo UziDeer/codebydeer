@@ -10,18 +10,48 @@
 
 <body style="text-align: center; margin: 0px; word-wrap: break-word;">
     <br>
-    <div><textarea id="div" rows="5" style="width: 98%;" onchange="InputTxt()"></textarea></div>
+    <div><textarea id="div" rows="10" style="width: calc(100vw - 40px);" onchange="InputTxt()"></textarea></div>
     <div id="div" style="display: none;"><!--ここに文字を入力--></div><br>
     <input type="number" id="max" min="1" style="width: 64px;" onchange="go(0)">文字ずつ表示(全<span id="len">0</span>文字)<br>
     <input type="button" value="UniCodeすべての文字を表示" onclick="allStr()">
-    <div id="selector1"></div><br>
+        <div id="selector1"></div><br>
 
-    <div id="result"
-        style="width: 98%; margin: auto; height: auto; border-width: 1px; border-style: solid; border-color: black; border-radius: 3px; text-align: left; background-color: white;">
-    </div>
+        <div id="result" class="dis"></div><br>
 
-    <br>
-    <div id="selector2"></div><br>
+        <div id="selector2"></div><br>
+
+        <div id="btn" class="dis"></div><br>
+
+        <div id="selector3"></div><br>
+
+        <div id="persent" class="dis"></div><br>
+
+        <div id="selector4"></div>
+    <style>
+        body * {
+            scrollbar-width: none;
+        }
+
+        div.dis {
+            width: calc(100vw - 40px);
+            margin: auto;
+            height: auto;
+            border: 1px solid black;
+            border-radius: 3px;
+            text-align: left;
+            overflow-x: scroll;
+            background-color: white;
+        }
+
+        #btn button {
+            border: none;
+            background: none;
+        }
+
+        #btn button:hover {
+            background-color: cadetblue;
+        }
+    </style>
     <script>
         let ElDiv = document.getElementById('div');
         let max = document.getElementById('max');
@@ -53,12 +83,26 @@
             }
             make(1);
             make(2);
+            make(3);
+            make(4);
             let cutStr = str.slice(page * max, page * max + max);
             let result = document.getElementById('result');
-            if (cutStr.match(/^ *$/)) {
+            if (/^\s*$/.test(cutStr)) {
                 result.innerText = "\n";
             } else {
                 result.innerText = cutStr;
+            }
+            let persent = document.getElementById('persent');
+            if (cutStr == "") {
+                persent.innerHTML = "<br>";
+            } else {
+                persent.innerHTML = cutStr.split("").map(el => `<b>${el}</b>: ${encodeURIComponent(el)}&nbsp;|&nbsp;`).join("");
+            }
+            let btn = document.getElementById("btn");
+            if (cutStr == "") {
+                btn.innerHTML = "<br>";
+            } else {
+                btn.innerHTML = cutStr.split("").map(el => `<button id="${el.charCodeAt()}" value="${el}" class="${el.charCodeAt().toString(2)} ${("0000" + el.charCodeAt().toString(16)).slice(-4)}" onclick="alert('string:${el}\\nbin: ${el.charCodeAt().toString(2)}, hex: ${("0000" + el.charCodeAt().toString(16)).slice(-4)}, num: ${el.charCodeAt()}')">${el}</button>`).join("");
             }
         }
         function InputTxt() {
@@ -78,12 +122,12 @@
             ElDiv.value = "";
             max.value = 5000;
             let i = 0;
-            let inter = setInterval(function(){
+            let inter = setInterval(function () {
                 for (let j = 0; j < 5000 && (i + j) < 65536; j++) {
                     ElDiv.value += String.fromCharCode(i + j);
                 }
                 InputTxt();
-                if (i == 70000) {
+                if (i >= 65536) {
                     clearInterval(inter);
                 }
                 i += 5000;

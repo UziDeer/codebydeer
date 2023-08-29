@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>経路検索</title>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=sunburst"></script>
 </head>
 
 <body>
@@ -30,7 +31,89 @@
     <hr>
     <img style="width: 300px;"
         src="data:image/webp;base64,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"
-        alt="マップ">
+        alt="マップ"><br>
+        <small>(装飾なしの数字がポイント名、各"[]"で囲まれた数字がインデックス)</small>
+    <hr>
+    <h3>このシステムのコード</h3>
+    <pre class="prettyprint linenums lang-js">
+    //[{ 名前(name): チェックポイント名, 接続(connect): [ { ind: どのインデックスのチェックポイントとの接続か, dist: その距離はどのくらいか }, ..., { ２回目以降も同様 } ] }, ..., { 2回目以降も同様 } ];
+    const mapData = [
+        { name: "はじまり", connect: [{ ind: 2, dist: 1 }] },
+        { name: "ポイント２", connect: [{ ind: 2, dist: 8 }, { ind: 27, dist: 13 }] },
+        { name: "ポイント１", connect: [{ ind: 0, dist: 1 }, { ind: 1, dist: 8 }, { ind: 3, dist: 1 }] },
+        { name: "ポイント４", connect: [{ ind: 2, dist: 1 }, { ind: 4, dist: 1 }] },
+        { name: "ポイント３", connect: [{ ind: 3, dist: 1 }, { ind: 6, dist: 1 }] },
+        { name: "ポイント６", connect: [{ ind: 6, dist: 1 }, { ind: 7, dist: 1 }] },
+        { name: "ポイント５", connect: [{ ind: 4, dist: 1 }, { ind: 5, dist: 1 }] },
+        { name: "ポイント８", connect: [{ ind: 5, dist: 1 }, { ind: 8, dist: 1 }] },
+        { name: "ポイント７", connect: [{ ind: 7, dist: 1 }, { ind: 10, dist: 1 }] },
+        { name: "ポイント１０", connect: [{ ind: 10, dist: 1 }, { ind: 11, dist: 1 }] },
+        { name: "ポイント９", connect: [{ ind: 8, dist: 1 }, { ind: 9, dist: 1 }] },
+        { name: "ポイント１２", connect: [{ ind: 9, dist: 1 }, { ind: 12, dist: 1 }] },
+        { name: "ポイント１１", connect: [{ ind: 11, dist: 1 }, { ind: 14, dist: 1 }] },
+        { name: "ポイント１４", connect: [{ ind: 14, dist: 1 }, { ind: 15, dist: 1 }] },
+        { name: "ポイント１３", connect: [{ ind: 12, dist: 1 }, { ind: 13, dist: 1 }] },
+        { name: "ポイント１６", connect: [{ ind: 13, dist: 1 }, { ind: 16, dist: 1 }] },
+        { name: "ポイント１５", connect: [{ ind: 15, dist: 1 }, { ind: 18, dist: 1 }] },
+        { name: "ポイント１８", connect: [{ ind: 18, dist: 1 }, { ind: 19, dist: 1 }] },
+        { name: "ポイント１７", connect: [{ ind: 16, dist: 1 }, { ind: 17, dist: 1 }] },
+        { name: "ポイント２０", connect: [{ ind: 17, dist: 1 }, { ind: 20, dist: 1 }] },
+        { name: "ポイント１９", connect: [{ ind: 19, dist: 1 }, { ind: 22, dist: 1 }] },
+        { name: "ポイント２２", connect: [{ ind: 22, dist: 1 }, { ind: 23, dist: 1 }] },
+        { name: "ポイント２１", connect: [{ ind: 20, dist: 1 }, { ind: 21, dist: 1 }] },
+        { name: "ポイント２４", connect: [{ ind: 21, dist: 1 }, { ind: 24, dist: 1 }] },
+        { name: "ポイント２３", connect: [{ ind: 23, dist: 1 }, { ind: 26, dist: 1 }] },
+        { name: "ポイント２６", connect: [{ ind: 26, dist: 1 }, { ind: 28, dist: 1 }] },
+        { name: "ポイント２５", connect: [{ ind: 24, dist: 1 }, { ind: 25, dist: 1 }] },
+        { name: "ポイント２８", connect: [{ ind: 1, dist: 13 }, { ind: 28, dist: 8 }] },
+        { name: "ポイント２７", connect: [{ ind: 25, dist: 1 }, { ind: 27, dist: 8 }, { ind: 29, dist: 1 }] },
+        { name: "おわり", connect: [{ ind: 28, dist: 1 }] }
+    ];
+    
+    let orderAll = [];
+    let findR = [];
+
+    function searchEnd(finds) {     //検索終了時の関数(上では&lt;すべてのルート&gt;の表示), finds => [ { dist: Number, order: Array }, ... ];
+        ...
+    }
+
+    function refresh(route) {       //より距離が短いルートが見つかった時の関数(上では結果の表示), route => { dist: Number, order: Array };
+        ...
+    }
+
+    function getRoute(start, end) {     //検索の実行関数, callback: 最短経路の表示(検索終了まで常時更新) => refresh(route), 見つかったすべてのルートの表示(検索終了時に実行) => searchEnd(finds);
+        orderAll = [{ dist: 0, order: [Number(start)] }];
+        findR = [];
+        let minDist = Infinity;
+        let nextData = [];
+        let inter = setInterval(() => {
+            orderAll.forEach((row, j) => {
+                let nextInfo = mapData[row.order.slice(-1)].connect.filter(el => !row.order.includes(el.ind));
+                if (row.order.slice(-1) == end) {
+                    if (row.dist &lt; minDist) {
+                        minDist = row.dist;
+                        refresh(row);
+                    }
+                    findR.push(row);
+                } else {
+                    nextInfo.forEach(el => {
+                        if (!row.order.includes(el.ind)) {
+                            nextData.push({ dist: row.dist + el.dist, order: row.order.concat([el.ind]) });
+                        }
+                    });
+                }
+            });
+            if (nextData.length == 0) {
+                clearInterval(inter);
+                searchEnd(findR);
+            } else {
+                orderAll = nextData.splice(0);
+            };
+        }, 0);
+    }
+    </pre>
+    <hr>
+    <h3></h3>
     <style>
         div#res {
             border: solid 1px;
@@ -55,38 +138,42 @@
             text-align: center;
             min-width: 100px;
         }
+
+        pre {
+            word-wrap: break-word;
+        }
     </style>
     <script>
         const mapData = [
             { name: "はじまり", connect: [{ ind: 2, dist: 1 }] },
-            { name: "ポ２", connect: [{ ind: 2, dist: 8 }, { ind: 27, dist: 13 }] },
-            { name: "ポ１", connect: [{ ind: 0, dist: 1 }, { ind: 1, dist: 8 }, { ind: 3, dist: 1 }] },
-            { name: "ポ４", connect: [{ ind: 2, dist: 1 }, { ind: 4, dist: 1 }] },
-            { name: "ポ３", connect: [{ ind: 3, dist: 1 }, { ind: 6, dist: 1 }] },
-            { name: "ポ６", connect: [{ ind: 6, dist: 1 }, { ind: 7, dist: 1 }] },
-            { name: "ポ５", connect: [{ ind: 4, dist: 1 }, { ind: 5, dist: 1 }] },
-            { name: "ポ８", connect: [{ ind: 5, dist: 1 }, { ind: 8, dist: 1 }] },
-            { name: "ポ７", connect: [{ ind: 7, dist: 1 }, { ind: 10, dist: 1 }] },
-            { name: "ポ１０", connect: [{ ind: 10, dist: 1 }, { ind: 11, dist: 1 }] },
-            { name: "ポ９", connect: [{ ind: 8, dist: 1 }, { ind: 9, dist: 1 }] },
-            { name: "ポ１２", connect: [{ ind: 9, dist: 1 }, { ind: 12, dist: 1 }] },
-            { name: "ポ１１", connect: [{ ind: 11, dist: 1 }, { ind: 14, dist: 1 }] },
-            { name: "ポ１４", connect: [{ ind: 14, dist: 1 }, { ind: 15, dist: 1 }] },
-            { name: "ポ１３", connect: [{ ind: 12, dist: 1 }, { ind: 13, dist: 1 }] },
-            { name: "ポ１６", connect: [{ ind: 13, dist: 1 }, { ind: 16, dist: 1 }] },
-            { name: "ポ１５", connect: [{ ind: 15, dist: 1 }, { ind: 18, dist: 1 }] },
-            { name: "ポ１８", connect: [{ ind: 18, dist: 1 }, { ind: 19, dist: 1 }] },
-            { name: "ポ１７", connect: [{ ind: 16, dist: 1 }, { ind: 17, dist: 1 }] },
-            { name: "ポ２０", connect: [{ ind: 17, dist: 1 }, { ind: 20, dist: 1 }] },
-            { name: "ポ１９", connect: [{ ind: 19, dist: 1 }, { ind: 22, dist: 1 }] },
-            { name: "ポ２２", connect: [{ ind: 22, dist: 1 }, { ind: 23, dist: 1 }] },
-            { name: "ポ２１", connect: [{ ind: 20, dist: 1 }, { ind: 21, dist: 1 }] },
-            { name: "ポ２４", connect: [{ ind: 21, dist: 1 }, { ind: 24, dist: 1 }] },
-            { name: "ポ２３", connect: [{ ind: 23, dist: 1 }, { ind: 26, dist: 1 }] },
-            { name: "ポ２６", connect: [{ ind: 26, dist: 1 }, { ind: 28, dist: 1 }] },
-            { name: "ポ２５", connect: [{ ind: 24, dist: 1 }, { ind: 25, dist: 1 }] },
-            { name: "ポ２８", connect: [{ ind: 1, dist: 13 }, { ind: 28, dist: 8 }] },
-            { name: "ポ２７", connect: [{ ind: 25, dist: 1 }, { ind: 27, dist: 8 }, { ind: 29, dist: 1 }] },
+            { name: "ポイント２", connect: [{ ind: 2, dist: 8 }, { ind: 27, dist: 13 }] },
+            { name: "ポイント１", connect: [{ ind: 0, dist: 1 }, { ind: 1, dist: 8 }, { ind: 3, dist: 1 }] },
+            { name: "ポイント４", connect: [{ ind: 2, dist: 1 }, { ind: 4, dist: 1 }] },
+            { name: "ポイント３", connect: [{ ind: 3, dist: 1 }, { ind: 6, dist: 1 }] },
+            { name: "ポイント６", connect: [{ ind: 6, dist: 1 }, { ind: 7, dist: 1 }] },
+            { name: "ポイント５", connect: [{ ind: 4, dist: 1 }, { ind: 5, dist: 1 }] },
+            { name: "ポイント８", connect: [{ ind: 5, dist: 1 }, { ind: 8, dist: 1 }] },
+            { name: "ポイント７", connect: [{ ind: 7, dist: 1 }, { ind: 10, dist: 1 }] },
+            { name: "ポイント１０", connect: [{ ind: 10, dist: 1 }, { ind: 11, dist: 1 }] },
+            { name: "ポイント９", connect: [{ ind: 8, dist: 1 }, { ind: 9, dist: 1 }] },
+            { name: "ポイント１２", connect: [{ ind: 9, dist: 1 }, { ind: 12, dist: 1 }] },
+            { name: "ポイント１１", connect: [{ ind: 11, dist: 1 }, { ind: 14, dist: 1 }] },
+            { name: "ポイント１４", connect: [{ ind: 14, dist: 1 }, { ind: 15, dist: 1 }] },
+            { name: "ポイント１３", connect: [{ ind: 12, dist: 1 }, { ind: 13, dist: 1 }] },
+            { name: "ポイント１６", connect: [{ ind: 13, dist: 1 }, { ind: 16, dist: 1 }] },
+            { name: "ポイント１５", connect: [{ ind: 15, dist: 1 }, { ind: 18, dist: 1 }] },
+            { name: "ポイント１８", connect: [{ ind: 18, dist: 1 }, { ind: 19, dist: 1 }] },
+            { name: "ポイント１７", connect: [{ ind: 16, dist: 1 }, { ind: 17, dist: 1 }] },
+            { name: "ポイント２０", connect: [{ ind: 17, dist: 1 }, { ind: 20, dist: 1 }] },
+            { name: "ポイント１９", connect: [{ ind: 19, dist: 1 }, { ind: 22, dist: 1 }] },
+            { name: "ポイント２２", connect: [{ ind: 22, dist: 1 }, { ind: 23, dist: 1 }] },
+            { name: "ポイント２１", connect: [{ ind: 20, dist: 1 }, { ind: 21, dist: 1 }] },
+            { name: "ポイント２４", connect: [{ ind: 21, dist: 1 }, { ind: 24, dist: 1 }] },
+            { name: "ポイント２３", connect: [{ ind: 23, dist: 1 }, { ind: 26, dist: 1 }] },
+            { name: "ポイント２６", connect: [{ ind: 26, dist: 1 }, { ind: 28, dist: 1 }] },
+            { name: "ポイント２５", connect: [{ ind: 24, dist: 1 }, { ind: 25, dist: 1 }] },
+            { name: "ポイント２８", connect: [{ ind: 1, dist: 13 }, { ind: 28, dist: 8 }] },
+            { name: "ポイント２７", connect: [{ ind: 25, dist: 1 }, { ind: 27, dist: 8 }, { ind: 29, dist: 1 }] },
             { name: "おわり", connect: [{ ind: 28, dist: 1 }] }
         ];
 
@@ -104,15 +191,6 @@
             document.getElementById("fastRes").innerHTML = "<table><tr><th>最短(" + route.dist + ")</th></tr><tr><td class='num'>" + route.order.join("<br>↓<br>") + "</td></tr></table>";
         }
 
-        function addTableRow(mode, el) {
-            let table = document.getElementById("table" + i);
-            if (mode == "continue") {
-                
-            } else if (mode == "remove") {
-                
-            }
-        }
-
         function getRoute(start, end) {
             orderAll = [{ dist: 0, order: [Number(start)] }];
             findR = [];
@@ -120,24 +198,17 @@
             let nextData = [];
             let inter = setInterval(() => {
                 orderAll.forEach((row, j) => {
-                    let nextInfo = mapData[row.order.slice(-1)].connect;
+                    let nextInfo = mapData[row.order.slice(-1)].connect.filter(el => !row.order.includes(el.ind));
                     if (row.order.slice(-1) == end) {
                         if (row.dist < minDist) {
                             minDist = row.dist;
                             refresh(row);
                         }
                         findR.push(row);
-                    } else {
-                        let explTbl = [];
+                    } else if (nextInfo.length != 0) {
                         nextInfo.forEach(el => {
-                            if (row.order.includes(el.ind)) {
-                                explTbl.push(["remove", el]);
-                            } else {
-                                explTbl.push(["continue", el]);
-                                nextData.push({ dist: row.dist + el.dist, order: row.order.concat([el.ind]) });
-                            }
+                            nextData.push({ dist: row.dist + el.dist, order: row.order.concat([el.ind]) });
                         });
-                        addTableRow(explTbl);
                     }
                 });
                 if (nextData.length == 0) {
@@ -148,6 +219,8 @@
                 };
             }, 0);
         }
+    </script>
+    <script>
         let params = new URLSearchParams();
         let pageP = new URLSearchParams(location.href.split("?")[1]);
         if (pageP.has("s") && pageP.has("g") && pageP.get("s") != "" && pageP.get("g") != "") {
